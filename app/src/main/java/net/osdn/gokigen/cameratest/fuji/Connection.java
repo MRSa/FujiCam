@@ -34,16 +34,24 @@ public class Connection
 
             comm.send_to_camera(sequence.registration_message());
 
-            byte[] rx_bytes = comm.receive_from_camera();
+            ReceivedData rx_bytes = comm.receive_from_camera();
             dump_bytes(indexNumber, rx_bytes);
             indexNumber++;
 /*
             応答エラーの場合は この値が返ってくるはず  = {0x05, 0x00, 0x00, 0x00, 0x19, 0x20, 0x00, 0x00};
 */
             comm.send_to_camera(sequence.start_message());
+
             rx_bytes = comm.receive_from_camera();
             dump_bytes(indexNumber, rx_bytes);
-            //indexNumber++;
+            indexNumber++;
+
+            comm.send_to_camera(sequence.start_message2());
+
+            //byte[] rx_bytes = comm.receive_from_camera();
+            rx_bytes = comm.receive_from_camera();
+            dump_bytes(indexNumber, rx_bytes);
+            indexNumber++;
 /*
             応答OKの場合は、8バイト ({0x03, 0x00, 0x01, 0x20} + {0x10, 0x02, 0x00, 0x00} )が応答されるはず
 
@@ -68,12 +76,12 @@ public class Connection
     }
 
 
-    private void dump_bytes(int indexNumber, byte[] data)
+    private void dump_bytes(int indexNumber,ReceivedData data)
     {
         int index = 0;
         StringBuffer message;
         message = new StringBuffer();
-        for (byte item : data)
+        for (byte item : data.getData())
         {
             index++;
             message.append(String.format("%02x ", item));
