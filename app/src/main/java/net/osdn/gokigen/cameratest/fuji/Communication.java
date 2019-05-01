@@ -2,11 +2,8 @@ package net.osdn.gokigen.cameratest.fuji;
 
 import android.util.Log;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Arrays;
@@ -27,12 +24,14 @@ class Communication
     private DataOutputStream dos = null;
     //private DataInputStream dis = null;
     BufferedReader bufferedReader = null;
+    private final FujiStreamReceiver stream;
+    private final FujiAsyncResponseReceiver response;
 
 
     Communication()
     {
-
-
+        this.stream = new FujiStreamReceiver(camera_ip, STREAM_PORT);
+        this.response = new FujiAsyncResponseReceiver(camera_ip, ASYNC_RESPONSE_PORT);
     }
 
     void connect_socket()
@@ -137,29 +136,44 @@ class Communication
         int receive_bytes = 0;
         InputStreamReader isr = null;
         byte[] byte_array = new byte[BUFFER_SIZE];
+        char[] char_array = new char[BUFFER_SIZE];
         try
         {
             Log.v(TAG, "receive_from_camera() : start.");
-             isr  = new InputStreamReader(socket.getInputStream());
+            isr  = new InputStreamReader(socket.getInputStream());
 
+/////////////////////////
+            int read_bytes = isr.read(char_array, 0, BUFFER_SIZE);
+            Log.v(TAG, "receive_from_camera() : " + read_bytes + " bytes.");
+            return (new ReceivedData(char_array, read_bytes));
+/////////////////////////
+/*
             int data = isr.read();
-            Log.v(TAG, "receive_from_camera() : #1 ");
+            byte_array[0] = (byte) data;
 
-            int read_bytes = 0;
+            Log.v(TAG, "receive_from_camera() : #1  : " + byte_array[0]);
+
+            int length = data - 1;
+            int read_bytes = 1;
             //while (data != -1)
-            while ((data >= 0)&&(data <= 255))
+            //while ((data >= 0)&&(data <= 255))
+            for (int index = 0; index < length; index++)
             {
+                data = isr.read();
+                //if ((data < 0)||(data > 255))
+                {
+                //    break;
+                }
                 Log.v(TAG, "receive_from_camera() : #2 (" + read_bytes + ") " + data);
-
                 byte_array[read_bytes] = (byte) data;
                 read_bytes++;
-                data = isr.read();
             }
             receive_bytes = read_bytes;
 
             //isr.close();
-
-            /*
+*/
+/////////////////////////
+/*
             dis = new DataInputStream(socket.getInputStream());
             //BufferedInputStream stream = new BufferedInputStream(is);
             while (receive_bytes < BUFFER_SIZE)
@@ -328,5 +342,24 @@ bool is_success_response(uint32_t const id, void const* buffer,
 
  */
 
+
+
+    void start_stream()
+    {
+        stream.start();
+    }
+    void stop_stream()
+    {
+        stream.stop();
+    }
+
+    void start_response()
+    {
+        response.start();
+    }
+    void stop_response()
+    {
+        response.stop();
+    }
 
 }

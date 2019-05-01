@@ -84,7 +84,7 @@ public class CamTest implements View.OnClickListener
         switch (id)
         {
             case R.id.button1:
-                showMessageText("Button1");
+                doShutter();
                 break;
             case R.id.button2:
                 showMessageText("Button2");
@@ -97,4 +97,31 @@ public class CamTest implements View.OnClickListener
                 break;
         }
     }
+
+
+    private void doShutter()
+    {
+        Log.v(TAG, "execute shutter");
+        try
+        {
+            Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.shutter, Snackbar.LENGTH_SHORT).show();
+            showMessageText("SHUTTER");
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean ret = connection.execute_shutter();
+                    if (!ret)
+                    {
+                        showMessageText("SHUTTER FAILURE...");
+                    }
+                }
+            });
+            thread.start();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 }

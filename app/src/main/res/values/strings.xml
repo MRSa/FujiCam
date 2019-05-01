@@ -5,6 +5,7 @@
     <string name="action_wifi_settings">WiFi Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="connect">Try connect</string>
+    <string name="shutter">Execute Shutter</string>
     <string name="label_button1">1</string>
     <string name="label_button2">2</string>
     <string name="label_button3">3</string>
