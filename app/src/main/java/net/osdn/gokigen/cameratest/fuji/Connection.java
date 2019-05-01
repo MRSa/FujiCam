@@ -25,134 +25,95 @@ public class Connection
         return (ret);
     }
 
-
     private boolean connect_to_camera()
     {
-
         try
         {
-            int indexNumber = 0;
+            ReceivedDataHolder rx_bytes;
             comm.connect_socket();
 
             comm.send_to_camera(sequence.registration_message());
+            rx_bytes = comm.receive_from_camera();
+            dump_bytes(0, rx_bytes);
+            Thread.sleep(50);
 
-            ReceivedData rx_bytes = comm.receive_from_camera();
-            dump_bytes(indexNumber, rx_bytes);
-            indexNumber++;
-/*
-            応答エラーの場合は この値が返ってくるはず  = {0x05, 0x00, 0x00, 0x00, 0x19, 0x20, 0x00, 0x00};
-*/
+            // 応答エラーの場合は この値が返ってくるはず  = {0x05, 0x00, 0x00, 0x00, 0x19, 0x20, 0x00, 0x00};
 
             // start_messageを送信
             comm.send_to_camera(sequence.start_message());
-
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(indexNumber, rx_bytes);
-            indexNumber++;
+            dump_bytes(1, rx_bytes);
+            Thread.sleep(50);
 
-/**/
-            //  なんだろう？？ (必要なようだが）
+            //  なんだろう？？ (送信が必要なようだが）
             comm.send_to_camera(sequence.start_message2());
-
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(indexNumber, rx_bytes);
-            indexNumber++;
-/**/
+            dump_bytes(2, rx_bytes);
+            Thread.sleep(50);
 
             // two_part messageを発行 (その１)
             comm.send_to_camera(sequence.start_message3_1());
-
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(indexNumber, rx_bytes);
-            indexNumber++;
+            dump_bytes(3, rx_bytes);
+            Thread.sleep(50);
 
             // two_part messageを発行 (その２)
             comm.send_to_camera(sequence.start_message3_2());
-
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(indexNumber, rx_bytes);
-            indexNumber++;
+            dump_bytes(4, rx_bytes);
+            Thread.sleep(50);
 
             // remote mode
             comm.send_to_camera(sequence.start_message4());
-
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(indexNumber, rx_bytes);
-            indexNumber++;
-
+            dump_bytes(5, rx_bytes);
+            Thread.sleep(50);
 
             // two_part messageを発行 (その１)
             comm.send_to_camera(sequence.start_message5_1());
-
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(indexNumber, rx_bytes);
-            indexNumber++;
+            dump_bytes(6, rx_bytes);
+            Thread.sleep(50);
 
             // two_part messageを発行 (その２)
             comm.send_to_camera(sequence.start_message5_2());
-
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(indexNumber, rx_bytes);
-            indexNumber++;
-
+            dump_bytes(7, rx_bytes);
+            Thread.sleep(50);
 
             // ????
             comm.send_to_camera(sequence.start_message6());
-
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(indexNumber, rx_bytes);
-            indexNumber++;
-
+            dump_bytes(8, rx_bytes);
+            Thread.sleep(50);
 
             // ????
             comm.send_to_camera(sequence.start_message7());
-
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(indexNumber, rx_bytes);
-            indexNumber++;
+            dump_bytes(9, rx_bytes);
+            Thread.sleep(50);
 
             // ????
             comm.send_to_camera(sequence.start_message8());
-
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(indexNumber, rx_bytes);
-            indexNumber++;
+            dump_bytes(10, rx_bytes);
+            Thread.sleep(50);
 
             // ????
             comm.send_to_camera(sequence.start_message9());
 
+            // 応答OKの場合は、8バイト ({0x03, 0x00, 0x01, 0x20} + {0x10, 0x02, 0x00, 0x00} )が応答されるはず
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(indexNumber, rx_bytes);
-            indexNumber++;
+            dump_bytes(11, rx_bytes);
+            Thread.sleep(50);
 
 
-/*
-            comm.send_to_camera(sequence.start_message2());
-
-            //byte[] rx_bytes = comm.receive_from_camera();
-            rx_bytes = comm.receive_from_camera();
-            dump_bytes(indexNumber, rx_bytes);
-            indexNumber++;
-*/
-/*
-            応答OKの場合は、8バイト ({0x03, 0x00, 0x01, 0x20} + {0x10, 0x02, 0x00, 0x00} )が応答されるはず
-
-*/
-
-
-/*
-            auto const msg4_1 =
-                make_static_message(message_type::two_part, 0x01, 0xdf, 0x00, 0x00);
-            auto const msg4_2 = make_static_message_followup(msg4_1, 0x05, 0x00);
-            fuji_twopart_message(sockfd, msg4_1, msg4_2);
-*/
-
-            // 別のポートもオープンしておく
+            // 別のポートもオープンして動作を行う。 (1500ms程度待つといけるみたいだ...)
+            Thread.sleep(1500);
             comm.start_stream();
             comm.start_response();
 
             Log.v(TAG, "connect_to_camera DONE.");
-
             return (true);
         }
         catch (Exception e)
@@ -168,7 +129,7 @@ public class Connection
         {
             comm.send_to_camera(sequence.status_request_message());
 
-            ReceivedData rx_bytes = comm.receive_from_camera();
+            ReceivedDataHolder rx_bytes = comm.receive_from_camera();
             dump_bytes(12, rx_bytes);
 
             // なんで２回...　でもやってみる
@@ -183,9 +144,7 @@ public class Connection
         return (false);
     }
 
-
-
-    private void dump_bytes(int indexNumber,ReceivedData data)
+    private void dump_bytes(int indexNumber, ReceivedDataHolder data)
     {
         int index = 0;
         StringBuffer message;
@@ -214,10 +173,10 @@ public class Connection
         {
             comm.send_to_camera(sequence.execute_shutter_message());
 
-            ReceivedData rx_bytes = comm.receive_from_camera();
+            ReceivedDataHolder rx_bytes = comm.receive_from_camera();
             dump_bytes(14, rx_bytes);
 
-            // なんで２回...　でもやってみる
+            // なんで２回受信...　でもやってみる
             rx_bytes = comm.receive_from_camera();
             dump_bytes(15, rx_bytes);
 

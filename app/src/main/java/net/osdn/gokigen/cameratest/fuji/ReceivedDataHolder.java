@@ -5,17 +5,20 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
-class ReceivedData
+/**
+ *   受信したデータを保持するクラス
+ *
+ */
+class ReceivedDataHolder
 {
     private final byte[] data;
 
-    ReceivedData(byte[] data, int length)
+    ReceivedDataHolder(byte[] data, int length)
     {
-        //this.data = new byte[length];
         this.data = Arrays.copyOfRange(data, 0, length);
     }
 
-    ReceivedData(char[] data, int length)
+    ReceivedDataHolder(char[] data, int length)
     {
         byte[] convertedData = toBytes(data);
         this.data = Arrays.copyOfRange(convertedData, 0, length);
@@ -26,12 +29,16 @@ class ReceivedData
         return (data);
     }
 
+    /**
+     *   char[]からbyte[]に変換する
+     *    (https://stackoverflow.com/questions/5513144/converting-char-to-byte より)
+     */
     private byte[] toBytes(char[] chars)
     {
         CharBuffer charBuffer = CharBuffer.wrap(chars);
         ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
         byte[] bytes = Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit());
-        Arrays.fill(byteBuffer.array(), (byte) 0);
+        Arrays.fill(byteBuffer.array(), (byte) 0x00);
         return (bytes);
     }
 }

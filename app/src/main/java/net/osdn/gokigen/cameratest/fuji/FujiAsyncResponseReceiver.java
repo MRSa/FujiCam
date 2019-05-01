@@ -2,15 +2,16 @@ package net.osdn.gokigen.cameratest.fuji;
 
 import android.util.Log;
 
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
-public class FujiAsyncResponseReceiver
+class FujiAsyncResponseReceiver
 {
     private final String TAG = toString();
     private final String ipAddress;
     private final int portNumber;
-    private static final int WAIT_MS = 750;
+    private static final int BUFFER_SIZE = 1280 + 8;
+    private static final int WAIT_MS = 250;   // 250ms
     private boolean isStart = false;
 
     FujiAsyncResponseReceiver(String ip, int portNumber)
@@ -56,20 +57,29 @@ public class FujiAsyncResponseReceiver
 
     private void startReceive(Socket socket)
     {
-        InputStream from = null;
+        InputStreamReader isr;
+        char[] char_array;
+        try
+        {
+            isr = new InputStreamReader(socket.getInputStream());
+            char_array = new char[BUFFER_SIZE];
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            Log.v(TAG, "===== startReceive() aborted.");
+            return;
+        }
         Log.v(TAG, "startReceive() start.");
         while (isStart)
         {
             try
             {
-                from = socket.getInputStream();
-                int value = 0;
-                int count = 0;
-                while ((value = from.read()) != -1)
-                {
-                    Log.v(TAG, " READ [" + count + "] " + value);
-                    count++;
-                }
+                int read_bytes = isr.read(char_array, 0, BUFFER_SIZE);
+                Log.v(TAG, "RECEIVE ASYNC  : " + read_bytes + " bytes.");
+                //return (new ReceivedDataHolder(char_array, read_bytes));
+
                 Thread.sleep(WAIT_MS);
             }
             catch (Exception e)
@@ -77,16 +87,13 @@ public class FujiAsyncResponseReceiver
                 e.printStackTrace();
             }
         }
-        if (from != null)
+        try
         {
-            try
-            {
-                from.close();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+            isr.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
         Log.v(TAG, "startReceive() end.");
     }
