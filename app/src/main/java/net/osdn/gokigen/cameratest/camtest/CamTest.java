@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 
 public class CamTest implements View.OnClickListener, ILiveViewImage
 {
@@ -28,6 +29,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
     private TextView textview;
     private Connection connection;
     private FileOutputStream outputStream = null;
+    private FileWriter fileWriter = null;
 
     public CamTest(@NonNull Activity activity)
     {
@@ -40,7 +42,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
         Log.v(TAG, "connect request");
         try
         {
-            //prepareFile();
+            prepareFile(false);
 
             Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.connect, Snackbar.LENGTH_SHORT).show();
 
@@ -148,10 +150,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             Log.v(TAG, "Image : "+ dataValue.length + " bytes.");
 
             // ダミーの記録ファイルが開いていたらファイルに書いておく。
-            if (outputStream != null)
-            {
-                outputStream.write(dataValue, 0, dataValue.length);
-            }
+            outputFile(receivedData);
 
             ///////  画像を作る
             final Bitmap imageData = BitmapFactory.decodeByteArray(dataValue, 18, (dataValue.length - 18));
@@ -188,19 +187,47 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
         }
     }
 
-    private void prepareFile()
+    private void outputFile(ReceivedDataHolder receivedData)
+    {
+        try
+        {
+            if (outputStream != null)
+            {
+                final byte[] byteData = receivedData.getData();
+                outputStream.write(byteData, 0, byteData.length);
+            }
+            if (fileWriter != null)
+            {
+                final char[] charData = receivedData.getCharData();
+                fileWriter.write(charData, 0, charData.length);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void prepareFile(boolean isStream)
     {
         try
         {
             final String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath() + "/AirA01a/";
             final String outputFileName = "camtest.bin";
             File filepath = new File(directoryPath.toLowerCase(), outputFileName.toLowerCase());
-            outputStream = new FileOutputStream(filepath);
+            if (isStream) {
+                outputStream = new FileOutputStream(filepath);
+                fileWriter = null;
+            } else {
+                outputStream = null;
+                fileWriter = new FileWriter(filepath);
+            }
         }
         catch (Exception e)
         {
             e.printStackTrace();
             outputStream = null;
+            fileWriter = null;
         }
     }
 

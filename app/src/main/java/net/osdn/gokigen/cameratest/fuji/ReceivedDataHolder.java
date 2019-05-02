@@ -12,16 +12,24 @@ import java.util.Arrays;
 public class ReceivedDataHolder
 {
     private final byte[] data;
+    private final char[] charData;
 
     ReceivedDataHolder(byte[] data, int length)
     {
         this.data = Arrays.copyOfRange(data, 0, length);
+        this.charData = null; // Arrays.copyOf(data, length);
     }
 
     ReceivedDataHolder(char[] data, int length)
     {
+        this.charData = data;
         byte[] convertedData = toBytes(data);
         this.data = Arrays.copyOfRange(convertedData, 0, length);
+    }
+
+    public char[] getCharData()
+    {
+        return (charData);
     }
 
     public byte[] getData()
