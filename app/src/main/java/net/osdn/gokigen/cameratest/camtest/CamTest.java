@@ -1,27 +1,38 @@
 package net.osdn.gokigen.cameratest.camtest;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import net.osdn.gokigen.cameratest.R;
 import net.osdn.gokigen.cameratest.fuji.Connection;
+import net.osdn.gokigen.cameratest.fuji.ILiveViewImage;
+import net.osdn.gokigen.cameratest.fuji.ReceivedDataHolder;
 
 import androidx.annotation.NonNull;
 
-public class CamTest implements View.OnClickListener
+import java.io.File;
+import java.io.FileOutputStream;
+
+public class CamTest implements View.OnClickListener, ILiveViewImage
 {
     private String TAG = toString();
     private final Activity activity;
     private TextView textview;
     private Connection connection;
+    private FileOutputStream outputStream = null;
+
     public CamTest(@NonNull Activity activity)
     {
         this.activity = activity;
-        this.connection = new Connection();
+        this.connection = new Connection(this);
     }
 
     public void connect()
@@ -29,6 +40,8 @@ public class CamTest implements View.OnClickListener
         Log.v(TAG, "connect request");
         try
         {
+            //prepareFile();
+
             Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.connect, Snackbar.LENGTH_SHORT).show();
 
             showMessageText("START CONNECT");
@@ -98,7 +111,6 @@ public class CamTest implements View.OnClickListener
         }
     }
 
-
     private void doShutter()
     {
         Log.v(TAG, "execute shutter");
@@ -121,6 +133,74 @@ public class CamTest implements View.OnClickListener
         catch (Exception e)
         {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateImage(ReceivedDataHolder receivedData)
+    {
+        try
+        {
+            final byte[] dataValue = receivedData.getData();
+            byte[] startJpegMarker = {(byte)0xff, (byte)0xd8};
+            byte[] endJpegMarker   = {(byte)0xff, (byte)0xd9};
+
+            Log.v(TAG, "Image : "+ dataValue.length + " bytes.");
+
+            // ダミーの記録ファイルが開いていたらファイルに書いておく。
+            if (outputStream != null)
+            {
+                outputStream.write(dataValue, 0, dataValue.length);
+            }
+
+            ///////  画像を作る
+            final Bitmap imageData = BitmapFactory.decodeByteArray(dataValue, 18, (dataValue.length - 18));
+            if (imageData == null)
+            {
+                Log.v(TAG, "imageData is null...");
+            }
+            else
+            {
+                Log.v(TAG, "imageData : " + imageData.getByteCount() + " bytes.");
+            }
+
+            //////  画像を更新する
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try
+                    {
+                        // ビットマップイメージを表示する。
+                        ImageView view = activity.findViewById(R.id.imageView);
+                        view.setImageBitmap(imageData);
+                        view.invalidate();
+                    }
+                    catch (Throwable e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        catch (Throwable e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void prepareFile()
+    {
+        try
+        {
+            final String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath() + "/AirA01a/";
+            final String outputFileName = "camtest.bin";
+            File filepath = new File(directoryPath.toLowerCase(), outputFileName.toLowerCase());
+            outputStream = new FileOutputStream(filepath);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            outputStream = null;
         }
     }
 

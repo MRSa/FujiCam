@@ -9,7 +9,7 @@ import java.util.Arrays;
  *   受信したデータを保持するクラス
  *
  */
-class ReceivedDataHolder
+public class ReceivedDataHolder
 {
     private final byte[] data;
 
@@ -24,7 +24,7 @@ class ReceivedDataHolder
         this.data = Arrays.copyOfRange(convertedData, 0, length);
     }
 
-    byte[] getData()
+    public byte[] getData()
     {
         return (data);
     }

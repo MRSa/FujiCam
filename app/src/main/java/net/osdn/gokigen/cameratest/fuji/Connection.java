@@ -2,15 +2,17 @@ package net.osdn.gokigen.cameratest.fuji;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 public class Connection
 {
     private final String TAG = toString();
     private final MessageSequence sequence;
     private final Communication comm;
 
-    public Connection()
+    public Connection(@NonNull ILiveViewImage imageViewer)
     {
-        this.comm = new Communication();
+        this.comm = new Communication(imageViewer);
         this.sequence = new MessageSequence();
     }
 
