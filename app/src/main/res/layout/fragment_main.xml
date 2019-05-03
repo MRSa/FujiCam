@@ -92,7 +92,7 @@
         android:layout_marginBottom="2dp"
         android:contentDescription="@string/blank"
         android:scaleType="fitCenter"
-        android:src="@drawable/aoi"
+        android:src="@drawable/cocoa"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

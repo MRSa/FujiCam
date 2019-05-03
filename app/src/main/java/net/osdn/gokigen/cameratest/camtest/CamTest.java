@@ -19,6 +19,7 @@ import net.osdn.gokigen.cameratest.fuji.ReceivedDataHolder;
 import androidx.annotation.NonNull;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 
@@ -42,7 +43,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
         Log.v(TAG, "connect request");
         try
         {
-            prepareFile(false);
+            prepareFile();
 
             Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.connect, Snackbar.LENGTH_SHORT).show();
 
@@ -102,10 +103,12 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
                 doShutter();
                 break;
             case R.id.button2:
-                showMessageText("Button2");
+                readImageFile("sampledata1.bin");
+                showMessageText("show 'sampledata1.bin'.");
                 break;
             case R.id.button3:
-                showMessageText("Button3");
+                readImageFile("sampledata2.bin");
+                showMessageText("show 'sampledata2.bin'.");
                 break;
             default:
                 showMessageText("Unknown : " + id);
@@ -152,7 +155,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             // ダミーの記録ファイルが開いていたらファイルに書いておく。
             outputFile(receivedData);
 
-            ///////  画像を作る
+            ///////  Bitmap画像を作る... //////
             final Bitmap imageData = BitmapFactory.decodeByteArray(dataValue, 18, (dataValue.length - 18));
             if (imageData == null)
             {
@@ -200,6 +203,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             {
                 final char[] charData = receivedData.getCharData();
                 fileWriter.write(charData, 0, charData.length);
+                fileWriter.flush();
             }
         }
         catch (Exception e)
@@ -208,14 +212,15 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
         }
     }
 
-    private void prepareFile(boolean isStream)
+    private void prepareFile()
     {
+        boolean useStream = true;
         try
         {
             final String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath() + "/AirA01a/";
             final String outputFileName = "camtest.bin";
             File filepath = new File(directoryPath.toLowerCase(), outputFileName.toLowerCase());
-            if (isStream) {
+            if (useStream) {
                 outputStream = new FileOutputStream(filepath);
                 fileWriter = null;
             } else {
@@ -231,4 +236,57 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
         }
     }
 
+    private void readImageFile(final String readFileName)
+    {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                readImageFileImpl(readFileName);
+            }
+        });
+        try
+        {
+            thread.start();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void readImageFileImpl(final String readFileName)
+    {
+        try
+        {
+            byte[] dummyImageData = new byte[1280 * 1024 + 8];
+            final String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath() + "/AirA01a/";
+            File filepath = new File(directoryPath.toLowerCase(), readFileName.toLowerCase());
+            FileInputStream istr = new FileInputStream(filepath);
+
+            final Bitmap imageData = BitmapFactory.decodeStream(istr);
+            istr.close();
+
+            //////  画像表示を更新する
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try
+                    {
+                        // ビットマップイメージを表示する。
+                        ImageView view = activity.findViewById(R.id.imageView);
+                        view.setImageBitmap(imageData);
+                        view.invalidate();
+                    }
+                    catch (Throwable e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 }
