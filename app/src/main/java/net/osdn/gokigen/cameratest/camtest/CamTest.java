@@ -262,22 +262,29 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
     {
         try
         {
-            byte[] dummyImageData = new byte[1280 * 1024 + 8];
+            Log.v(TAG, "readImageFileImpl() : " + readFileName);
             final String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath() + "/AirA01a/";
             File filepath = new File(directoryPath.toLowerCase(), readFileName.toLowerCase());
             FileInputStream istr = new FileInputStream(filepath);
-
             final Bitmap imageData = BitmapFactory.decodeStream(istr);
             istr.close();
+            if (imageData == null)
+            {
+                Log.v(TAG, "readImageFileImpl() : bitmap is NULL.");
+            }
+            else
+            {
+                Log.v(TAG, "readImageFileImpl() : bitmap is " + imageData.getByteCount() + " bytes.");
+            }
 
-            //////  画像表示を更新する
+            //////  画像表示を更新する　//////
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try
                     {
                         // ビットマップイメージを表示する。
-                        ImageView view = activity.findViewById(R.id.imageView);
+                        ImageView view = activity.findViewById(R.id.information_view);
                         view.setImageBitmap(imageData);
                         view.invalidate();
                     }
@@ -288,7 +295,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
                 }
             });
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             e.printStackTrace();
         }
