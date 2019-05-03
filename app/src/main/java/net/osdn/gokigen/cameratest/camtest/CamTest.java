@@ -110,6 +110,10 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
                 readImageFile("sampledata2.bin");
                 showMessageText("show 'sampledata2.bin'.");
                 break;
+            case R.id.button4:
+                readImageFile("sampledata3.bin");
+                showMessageText("show 'sampledata3.bin'.");
+                break;
             default:
                 showMessageText("Unknown : " + id);
                 break;

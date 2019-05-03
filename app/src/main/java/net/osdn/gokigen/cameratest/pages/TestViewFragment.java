@@ -58,9 +58,11 @@ public class TestViewFragment extends Fragment
                 Button btn1 = rootView.findViewById(R.id.button1);
                 Button btn2 = rootView.findViewById(R.id.button2);
                 Button btn3 = rootView.findViewById(R.id.button3);
+                Button btn4 = rootView.findViewById(R.id.button4);
                 btn1.setOnClickListener(testTarget);
                 btn2.setOnClickListener(testTarget);
                 btn3.setOnClickListener(testTarget);
+                btn4.setOnClickListener(testTarget);
             }
         }
         catch (Exception e)
