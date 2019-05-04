@@ -24,8 +24,35 @@ import android.view.WindowManager;
 import net.osdn.gokigen.cameratest.camtest.CamTest;
 import net.osdn.gokigen.cameratest.pages.SectionsPagerAdapter;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+
 public class MainActivity extends AppCompatActivity
 {
+    /////// OpenCV ///////
+    static
+    {
+        System.loadLibrary("opencv_java4");
+    }
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this)
+    {
+        @Override
+        public void onManagerConnected(int status)
+        {
+            switch (status)
+            {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+                    Log.i(TAG, "OpenCV loaded successfully");
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+            }
+        }
+    };
+
     private final String TAG = toString();
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;

@@ -61,6 +61,7 @@ class FujiStreamReceiver
 
     private void startReceive(Socket socket)
     {
+/**/
         InputStreamReader isr;
         char[] char_array;
         try
@@ -75,14 +76,28 @@ class FujiStreamReceiver
             Log.v(TAG, "===== startReceive() aborted.");
             return;
         }
+/**/
         Log.v(TAG, "startReceive() start.");
         while (isStart)
         {
             try
             {
+/*
+                Bitmap imageData = BitmapFactory.decodeStream(socket.getInputStream());
+                if (imageData != null)
+                {
+                    // received image
+                    Log.v(TAG, "RECEIVED IMAGE.");
+                }
+                else
+                {
+                    Log.v(TAG, "IMAGE IS NULL...");
+                }
+*/
+/**/
                 int read_bytes = isr.read(char_array, 0, BUFFER_SIZE);
                 imageViewer.updateImage(new ReceivedDataHolder(char_array, read_bytes));
-
+/**/
                 Thread.sleep(WAIT_MS);
             }
             catch (Exception e)
@@ -90,6 +105,7 @@ class FujiStreamReceiver
                 e.printStackTrace();
             }
         }
+/**/
         try
         {
             isr.close();
@@ -98,6 +114,7 @@ class FujiStreamReceiver
         {
             e.printStackTrace();
         }
+/**/
         Log.v(TAG, "startReceive() end.");
     }
 }

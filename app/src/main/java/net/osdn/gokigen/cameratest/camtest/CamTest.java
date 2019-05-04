@@ -194,6 +194,37 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
         }
     }
 
+    @Override
+    public void updateImage(final Bitmap bitmap)
+    {
+        try
+        {
+            Log.v(TAG, "bitmap : " + bitmap.getByteCount() + " bytes.");
+
+            //////  画像を更新する
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try
+                    {
+                        // ビットマップイメージを表示する。
+                        ImageView view = activity.findViewById(R.id.imageView);
+                        view.setImageBitmap(bitmap);
+                        view.invalidate();
+                    }
+                    catch (Throwable e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        catch (Throwable e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     private void outputFile(ReceivedDataHolder receivedData)
     {
         try
