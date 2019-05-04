@@ -29,11 +29,12 @@ import org.opencv.android.LoaderCallbackInterface;
 
 public class MainActivity extends AppCompatActivity
 {
-    /////// OpenCV ///////
+    /////// OpenCV ///////  : license https://opencv.org/license/
     static
     {
         System.loadLibrary("opencv_java4");
     }
+
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this)
     {
         @Override
@@ -58,6 +59,9 @@ public class MainActivity extends AppCompatActivity
     private ViewPager mViewPager;
     private CamTest testTarget;
 
+    /**
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -112,6 +116,9 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /**
+     *
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults)
     {
@@ -120,6 +127,9 @@ public class MainActivity extends AppCompatActivity
         onReadyClass();
     }
 
+    /**
+     *
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -128,6 +138,9 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     *
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -154,6 +167,12 @@ public class MainActivity extends AppCompatActivity
             {
                 e.printStackTrace();
             }
+            return (true);
+        }
+        if (id == R.id.action_exit)
+        {
+            // アプリケーションを終了する
+            exitApplication();
             return (true);
         }
         return super.onOptionsItemSelected(item);
@@ -204,6 +223,42 @@ public class MainActivity extends AppCompatActivity
         {
             e.printStackTrace();
         }
+    }
+
+    /**
+     *
+     */
+    private void exitApplication()
+    {
+        try
+        {
+            finish();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     *
+     */
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        Log.d(TAG, "OpenCV library found inside package. Using it!");
+        mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+    }
+
+    /**
+     *
+     */
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
     }
 
 }
