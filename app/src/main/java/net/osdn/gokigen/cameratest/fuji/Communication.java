@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.Socket;
 
 class Communication
@@ -111,23 +110,6 @@ class Communication
 
     ReceivedDataHolder receive_from_camera()
     {
-/*
-        InputStreamReader isr;
-        char[] char_array = new char[BUFFER_SIZE];
-        try
-        {
-            //Log.v(TAG, "receive_from_camera() : start.");
-            isr  = new InputStreamReader(socket.getInputStream());
-            int read_bytes = isr.read(char_array, 0, BUFFER_SIZE);
-            Log.v(TAG, "receive_from_camera() : " + read_bytes + " bytes.");
-            return (new ReceivedDataHolder(char_array, read_bytes));
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return (new ReceivedDataHolder(char_array, 0));
-*/
         try
         {
             byte[] byte_array = new byte[BUFFER_SIZE];
@@ -173,6 +155,7 @@ class Communication
     {
         stream.start();
     }
+
     void stop_stream()
     {
         stream.stop();
@@ -182,6 +165,7 @@ class Communication
     {
         response.start();
     }
+
     void stop_response()
     {
         response.stop();

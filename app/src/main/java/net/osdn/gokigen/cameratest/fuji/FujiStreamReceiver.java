@@ -11,8 +11,8 @@ class FujiStreamReceiver
     private final String ipAddress;
     private final int portNumber;
     private final ILiveViewImage imageViewer;
+    private static final int WAIT_MS = 75;
     private static final int BUFFER_SIZE = 1280 * 1024 + 8;
-    private static final int WAIT_MS = 50;
     private boolean isStart = false;
 
     FujiStreamReceiver(String ip, int portNumber, @NonNull ILiveViewImage imageViewer)
@@ -59,7 +59,6 @@ class FujiStreamReceiver
 
     private void startReceive(Socket socket)
     {
-/**/
         InputStream isr;
         byte[] byteArray;
         try
@@ -73,28 +72,12 @@ class FujiStreamReceiver
             Log.v(TAG, "===== startReceive() aborted.");
             return;
         }
-/**/
-        Log.v(TAG, "startReceive() start.");
         while (isStart)
         {
             try
             {
-/*
-                Bitmap imageData = BitmapFactory.decodeStream(socket.getInputStream());
-                if (imageData != null)
-                {
-                    // received image
-                    Log.v(TAG, "RECEIVED IMAGE.");
-                }
-                else
-                {
-                    Log.v(TAG, "IMAGE IS NULL...");
-                }
-*/
-/**/
                 int read_bytes = isr.read(byteArray, 0, BUFFER_SIZE);
                 imageViewer.updateImage(new ReceivedDataHolder(byteArray, read_bytes));
-/**/
                 Thread.sleep(WAIT_MS);
             }
             catch (Exception e)
@@ -102,7 +85,6 @@ class FujiStreamReceiver
                 e.printStackTrace();
             }
         }
-/**/
         try
         {
             isr.close();
@@ -111,7 +93,5 @@ class FujiStreamReceiver
         {
             e.printStackTrace();
         }
-/**/
-        Log.v(TAG, "startReceive() end.");
     }
 }

@@ -107,11 +107,11 @@ public class Connection
             // 応答OKの場合は、8バイト ({0x03, 0x00, 0x01, 0x20} + {0x10, 0x02, 0x00, 0x00} )が応答されるはず
             rx_bytes = comm.receive_from_camera();
             dump_bytes(11, rx_bytes);
-            Thread.sleep(50);
+            Thread.sleep(150);
 
 
             // 別のポートもオープンして動作を行う。 (1500ms程度待つといけるみたいだ...)
-            Thread.sleep(1500);
+            Thread.sleep(2000);
             comm.start_stream();
             comm.start_response();
 
@@ -123,6 +123,35 @@ public class Connection
             e.printStackTrace();
         }
         return (false);
+    }
+
+    public void reset_to_camera()
+    {
+        try
+        {
+            comm.send_to_camera(sequence.reset_message());
+            ReceivedDataHolder rx_bytes = comm.receive_from_camera();
+            dump_bytes(0, rx_bytes);
+            Thread.sleep(150);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void disconnect()
+    {
+        try
+        {
+            comm.stop_stream();
+            comm.stop_response();
+            comm.disconnect_socket();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private boolean get_current_settings()
@@ -181,7 +210,6 @@ public class Connection
             // なんで２回受信...　でもやってみる
             rx_bytes = comm.receive_from_camera();
             dump_bytes(15, rx_bytes);
-
         }
         catch (Exception e)
         {

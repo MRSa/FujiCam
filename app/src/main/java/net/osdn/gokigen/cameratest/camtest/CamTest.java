@@ -20,7 +20,6 @@ import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 
 
 public class CamTest implements View.OnClickListener, ILiveViewImage
@@ -29,7 +28,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
     private final Activity activity;
     private TextView textview;
     private Connection connection;
-    private FileOutputStream outputStream = null;
+    //private FileOutputStream outputStream = null;
     private int offsetSize = 18;  // 4byte: データサイズ、14byte: (謎の)ヘッダ
 
     public CamTest(@NonNull Activity activity)
@@ -43,8 +42,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
         Log.v(TAG, "connect request");
         try
         {
-            prepareFile();
-
+            //prepareFile();
             Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.connect, Snackbar.LENGTH_SHORT).show();
 
             showMessageText("START CONNECT");
@@ -65,6 +63,42 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             e.printStackTrace();
         }
     }
+
+    public void disconnect()
+    {
+        try
+        {
+            connection.disconnect();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void resetConnection()
+    {
+        Log.v(TAG, "Reset Connection");
+
+        showMessageText("RESET CONNECTION");
+        try
+        {
+            Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.action_reset, Snackbar.LENGTH_SHORT).show();
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    connection.reset_to_camera();
+                }
+            });
+            thread.start();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
 
     public void settings()
     {
@@ -172,7 +206,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             Log.v(TAG, "Image : "+ dataValue.length + " bytes.");
 
             // ダミーの記録ファイルが開いていたらファイルに書いておく。
-            outputFile(receivedData);
+            //outputFile(receivedData);
 
             ///////  Bitmap画像を作る... //////
             final Bitmap imageData = getBitmap(receivedData);
@@ -230,7 +264,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             e.printStackTrace();
         }
     }
-
+/*
     private void outputFile(ReceivedDataHolder receivedData)
     {
         try
@@ -262,7 +296,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             outputStream = null;
         }
     }
-
+*/
     private void readImageFile(final String readFileName)
     {
         Thread thread = new Thread(new Runnable() {
@@ -295,11 +329,12 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             {
                 Log.v(TAG, "readImageFileImpl() : bitmap is NULL.");
             }
+/*
             else
             {
                 Log.v(TAG, "readImageFileImpl() : bitmap is " + imageData.getByteCount() + " bytes.");
             }
-
+*/
             //////  画像表示を更新する　//////
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -333,12 +368,15 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             final Bitmap imageData = BitmapFactory.decodeByteArray(data, offsetSize, (data.length - offsetSize));
             if (imageData == null)
             {
-                Log.v(TAG, "readImageFileImpl() : bitmap is NULL. (offset : " + offsetSize + ")");
+                Log.v(TAG, "getBitmap() : NULL. (offset : " + offsetSize + ")");
+                return (null);
             }
+/*
             else
             {
-                Log.v(TAG, "readImageFileImpl() : bitmap is " + imageData.getByteCount() + " bytes.");
+                Log.v(TAG, "getBitmap() : " + imageData.getByteCount() + "bytes. (offset : " + offsetSize + ")");
             }
+*/
             return (imageData);
         }
         catch (Exception e)

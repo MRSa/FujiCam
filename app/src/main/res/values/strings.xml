@@ -14,4 +14,5 @@
     <string name="label_button5">5</string>
     <string name="action_up">Up</string>
     <string name="action_down">Down</string>
+    <string name="action_reset">Reset Connection</string>
 </resources>

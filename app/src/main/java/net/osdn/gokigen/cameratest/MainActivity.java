@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity
         initializeClass();
         prepareClass();
         onReadyClass();
-
     }
 
     /**
@@ -173,6 +172,11 @@ public class MainActivity extends AppCompatActivity
         {
             // アプリケーションを終了する
             exitApplication();
+            return (true);
+        }
+        if (id == R.id.action_reset)
+        {
+            testTarget.resetConnection();
             return (true);
         }
         if (id == R.id.action_up_value)
@@ -242,6 +246,7 @@ public class MainActivity extends AppCompatActivity
     {
         try
         {
+            testTarget.disconnect();
             finish();
         }
         catch (Exception e)
