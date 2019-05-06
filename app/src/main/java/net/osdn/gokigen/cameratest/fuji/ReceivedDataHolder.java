@@ -12,8 +12,9 @@ import java.util.Arrays;
 public class ReceivedDataHolder
 {
     private final byte[] data;
+    private static final int DATA_OFFSET = 18;
 
-    public ReceivedDataHolder(byte[] data, int length)
+    ReceivedDataHolder(byte[] data, int length)
     {
         this.data = Arrays.copyOfRange(data, 0, length);
      }
@@ -33,6 +34,18 @@ public class ReceivedDataHolder
     public byte[] getData()
     {
         return (data);
+    }
+
+    public ByteBuffer getByteBuffer()
+    {
+        ByteBuffer dataBuffer = ByteBuffer.allocateDirect(data.length - DATA_OFFSET);
+        dataBuffer.put(Arrays.copyOfRange(data, DATA_OFFSET, (data.length - DATA_OFFSET)));
+        return (dataBuffer);
+    }
+
+    public int getLength()
+    {
+        return (data.length - DATA_OFFSET);
     }
 
     /**

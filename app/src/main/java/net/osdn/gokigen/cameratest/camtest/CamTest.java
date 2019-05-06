@@ -18,10 +18,18 @@ import net.osdn.gokigen.cameratest.fuji.ReceivedDataHolder;
 
 import androidx.annotation.NonNull;
 
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+
+import static org.opencv.core.CvType.CV_8UC1;
+import static org.opencv.imgcodecs.Imgcodecs.IMREAD_COLOR;
 
 public class CamTest implements View.OnClickListener, ILiveViewImage
 {
@@ -160,6 +168,8 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             outputFile(receivedData);
 
             ///////  Bitmap画像を作る... //////
+            final Bitmap imageData = getBitmap(receivedData);
+/*
             final Bitmap imageData = BitmapFactory.decodeByteArray(dataValue, 18, (dataValue.length - 18));
             if (imageData == null)
             {
@@ -169,7 +179,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             {
                 Log.v(TAG, "imageData : " + imageData.getByteCount() + " bytes.");
             }
-
+*/
             //////  画像を更新する
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -330,5 +340,30 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
         {
             e.printStackTrace();
         }
+    }
+
+    private Bitmap getBitmap(ReceivedDataHolder receivedData)
+    {
+        Bitmap bitmap;
+        try {
+            final ByteBuffer dataValue = receivedData.getByteBuffer();
+            final int dataLength = receivedData.getLength();
+//            final byte[] imageBytes = Arrays.copyOfRange(dataValue, 18, dataValue.length);
+
+            // OpenCVのデータ型に変換
+            Mat rawData = new Mat( 1,dataLength, CV_8UC1, dataValue);
+            Mat decodedImage = Imgcodecs.imdecode(rawData, IMREAD_COLOR);
+            bitmap = Bitmap.createBitmap(decodedImage.width(), decodedImage.height(), Bitmap.Config.ARGB_8888);
+            //org.opencv.android.Utils.matToBitmap(decodedImage, bitmap);
+
+            rawData.release();
+            decodedImage.release();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            bitmap = null;
+        }
+        return (bitmap);
     }
 }
