@@ -1,10 +1,8 @@
 package net.osdn.gokigen.cameratest.fuji;
 
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.Socket;
 
 class FujiStreamReceiver
@@ -62,13 +60,12 @@ class FujiStreamReceiver
     private void startReceive(Socket socket)
     {
 /**/
-        InputStreamReader isr;
-        char[] char_array;
+        InputStream isr;
+        byte[] byteArray;
         try
         {
-            isr = new InputStreamReader(socket.getInputStream());
-            char_array = new char[BUFFER_SIZE];
-
+            isr = socket.getInputStream();
+            byteArray = new byte[BUFFER_SIZE];
         }
         catch (Exception e)
         {
@@ -95,8 +92,8 @@ class FujiStreamReceiver
                 }
 */
 /**/
-                int read_bytes = isr.read(char_array, 0, BUFFER_SIZE);
-                imageViewer.updateImage(new ReceivedDataHolder(char_array, read_bytes));
+                int read_bytes = isr.read(byteArray, 0, BUFFER_SIZE);
+                imageViewer.updateImage(new ReceivedDataHolder(byteArray, read_bytes));
 /**/
                 Thread.sleep(WAIT_MS);
             }
