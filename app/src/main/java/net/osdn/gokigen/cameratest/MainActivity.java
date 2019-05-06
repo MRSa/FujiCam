@@ -148,12 +148,6 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
-        {
-            testTarget.settings();
-            return (true);
-        }
         if (id == R.id.action_wifi_settings)
         {
             try
@@ -174,9 +168,16 @@ public class MainActivity extends AppCompatActivity
             exitApplication();
             return (true);
         }
+/*
         if (id == R.id.action_reset)
         {
             testTarget.resetConnection();
+            return (true);
+        }
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings)
+        {
+            testTarget.settings();
             return (true);
         }
         if (id == R.id.action_up_value)
@@ -189,6 +190,7 @@ public class MainActivity extends AppCompatActivity
             testTarget.valueDown();
             return (true);
         }
+*/
         return super.onOptionsItemSelected(item);
     }
 

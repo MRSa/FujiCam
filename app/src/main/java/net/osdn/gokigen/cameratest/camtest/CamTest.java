@@ -98,8 +98,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
         }
 
     }
-
-
+/*
     public void settings()
     {
         Log.v(TAG, "settings menu");
@@ -120,7 +119,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
         offsetSize--;
         showMessageText("OFFSET : " + offsetSize);
     }
-
+*/
 
     private void showMessageText(final String message)
     {
@@ -152,16 +151,16 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
                 doShutter();
                 break;
             case R.id.button2:
-                readImageFile("sampledata1.bin");
-                showMessageText("show 'sampledata1.bin'.");
+                //readImageFile("sampledata1.bin");
+                //showMessageText("show 'sampledata1.bin'.");
                 break;
             case R.id.button3:
-                readImageFile("sampledata2.bin");
-                showMessageText("show 'sampledata2.bin'.");
+                //readImageFile("sampledata2.bin");
+                //showMessageText("show 'sampledata2.bin'.");
                 break;
             case R.id.button4:
-                readImageFile("sampledata3.bin");
-                showMessageText("show 'sampledata3.bin'.");
+                //readImageFile("sampledata3.bin");
+                //showMessageText("show 'sampledata3.bin'.");
                 break;
             default:
                 showMessageText("Unknown : " + id);
@@ -296,7 +295,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             outputStream = null;
         }
     }
-*/
+
     private void readImageFile(final String readFileName)
     {
         Thread thread = new Thread(new Runnable() {
@@ -329,12 +328,10 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             {
                 Log.v(TAG, "readImageFileImpl() : bitmap is NULL.");
             }
-/*
             else
             {
                 Log.v(TAG, "readImageFileImpl() : bitmap is " + imageData.getByteCount() + " bytes.");
             }
-*/
             //////  画像表示を更新する　//////
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -358,7 +355,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             e.printStackTrace();
         }
     }
-
+*/
 
     private Bitmap getBitmap(ReceivedDataHolder receivedData)
     {
