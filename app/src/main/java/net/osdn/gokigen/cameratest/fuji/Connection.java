@@ -34,7 +34,7 @@ public class Connection
             ReceivedDataHolder rx_bytes;
             comm.connect_socket();
 
-            comm.send_to_camera(sequence.registration_message());
+            comm.send_to_camera(sequence.registration_message(), false);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(0, rx_bytes);
             Thread.sleep(50);
@@ -42,67 +42,67 @@ public class Connection
             // 応答エラーの場合は この値が返ってくるはず  = {0x05, 0x00, 0x00, 0x00, 0x19, 0x20, 0x00, 0x00};
 
             // start_messageを送信
-            comm.send_to_camera(sequence.start_message());
+            comm.send_to_camera(sequence.start_message(), false);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(1, rx_bytes);
             Thread.sleep(50);
 
             //  なんだろう？？ (送信が必要なようだが）
-            comm.send_to_camera(sequence.start_message2());
+            comm.send_to_camera(sequence.start_message2(), false);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(2, rx_bytes);
             Thread.sleep(50);
 
             // two_part messageを発行 (その１)
-            comm.send_to_camera(sequence.start_message3_1());
+            comm.send_to_camera(sequence.start_message3_1(), false);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(3, rx_bytes);
             Thread.sleep(50);
 
             // two_part messageを発行 (その２)
-            comm.send_to_camera(sequence.start_message3_2());
+            comm.send_to_camera(sequence.start_message3_2(), false);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(4, rx_bytes);
             Thread.sleep(50);
 
             // remote mode
-            comm.send_to_camera(sequence.start_message4());
+            comm.send_to_camera(sequence.start_message4(), false);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(5, rx_bytes);
             Thread.sleep(50);
 
             // two_part messageを発行 (その１)
-            comm.send_to_camera(sequence.start_message5_1());
+            comm.send_to_camera(sequence.start_message5_1(), false);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(6, rx_bytes);
             Thread.sleep(50);
 
             // two_part messageを発行 (その２)
-            comm.send_to_camera(sequence.start_message5_2());
+            comm.send_to_camera(sequence.start_message5_2(), false);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(7, rx_bytes);
             Thread.sleep(50);
 
             // ????
-            comm.send_to_camera(sequence.start_message6());
+            comm.send_to_camera(sequence.start_message6(), false);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(8, rx_bytes);
             Thread.sleep(50);
 
             // ????
-            comm.send_to_camera(sequence.start_message7());
+            comm.send_to_camera(sequence.start_message7(), false);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(9, rx_bytes);
             Thread.sleep(50);
 
             // ????
-            comm.send_to_camera(sequence.start_message8());
+            comm.send_to_camera(sequence.start_message8(), false);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(10, rx_bytes);
             Thread.sleep(50);
 
             // ????
-            comm.send_to_camera(sequence.start_message9());
+            comm.send_to_camera(sequence.start_message9(), false);
 
             // 応答OKの場合は、8バイト ({0x03, 0x00, 0x01, 0x20} + {0x10, 0x02, 0x00, 0x00} )が応答されるはず
             rx_bytes = comm.receive_from_camera();
@@ -129,7 +129,7 @@ public class Connection
     {
         try
         {
-            comm.send_to_camera(sequence.reset_message());
+            comm.send_to_camera(sequence.reset_message(), true);
             ReceivedDataHolder rx_bytes = comm.receive_from_camera();
             dump_bytes(0, rx_bytes);
             Thread.sleep(150);
@@ -158,7 +158,7 @@ public class Connection
     {
         try
         {
-            comm.send_to_camera(sequence.status_request_message());
+            comm.send_to_camera(sequence.status_request_message(), true);
 
             ReceivedDataHolder rx_bytes = comm.receive_from_camera();
             dump_bytes(12, rx_bytes);
@@ -202,7 +202,7 @@ public class Connection
     {
         try
         {
-            comm.send_to_camera(sequence.execute_shutter_message());
+            comm.send_to_camera(sequence.execute_shutter_message(), true);
 
             ReceivedDataHolder rx_bytes = comm.receive_from_camera();
             dump_bytes(14, rx_bytes);

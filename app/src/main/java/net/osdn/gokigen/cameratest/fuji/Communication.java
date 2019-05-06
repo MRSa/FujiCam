@@ -22,6 +22,7 @@ class Communication
     private Socket socket = null;
     private DataOutputStream dos = null;
     private BufferedReader bufferedReader = null;
+    private int sequenceNumber = 0x0000000a;
 
     private final FujiStreamReceiver stream;
     private final FujiAsyncResponseReceiver response;
@@ -79,7 +80,7 @@ class Communication
         System.gc();
     }
 
-    void send_to_camera(byte[] byte_array)
+    void send_to_camera(byte[] byte_array, boolean useSeqNumber)
     {
         //Log.v(TAG, "send_to_camera() : " + byte_array.length + " bytes.");
         try
@@ -95,8 +96,21 @@ class Communication
             sendData[3] = 0x00;
             System.arraycopy(byte_array,0,sendData,4, byte_array.length);
 
+            if (useSeqNumber)
+            {
+                sendData[8]  = (byte) ((0x000000ff & sequenceNumber));
+                sendData[9]  = (byte) (((0x0000ff00 & sequenceNumber) >>> 8) & 0x000000ff);
+                sendData[10] = (byte) (((0x00ff0000 & sequenceNumber) >>> 16) & 0x000000ff);
+                sendData[11] = (byte) (((0xff000000 & sequenceNumber) >>> 24) & 0x000000ff);
+
+                Log.v(TAG, "SEQ No. : " + sequenceNumber);
+
+                // シーケンス番号を増やす
+                sequenceNumber++;
+            }
             // ログに送信メッセージを出力する
             dump_bytes("SEND[" + sendData.length + "] ", sendData);
+
 
             // (データを)送信
             dos.write(sendData);
