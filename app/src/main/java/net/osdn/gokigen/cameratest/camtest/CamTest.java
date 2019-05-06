@@ -18,17 +18,22 @@ import net.osdn.gokigen.cameratest.fuji.ReceivedDataHolder;
 
 import androidx.annotation.NonNull;
 
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import static org.opencv.core.CvType.CV_16UC3;
 import static org.opencv.core.CvType.CV_8UC1;
+import static org.opencv.core.CvType.CV_8UC3;
 import static org.opencv.imgcodecs.Imgcodecs.IMREAD_COLOR;
 
 public class CamTest implements View.OnClickListener, ILiveViewImage
@@ -39,6 +44,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
     private Connection connection;
     private FileOutputStream outputStream = null;
     private FileWriter fileWriter = null;
+    private int offsetSize = 0;
 
     public CamTest(@NonNull Activity activity)
     {
@@ -80,6 +86,23 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
 
         showMessageText("BBBB");
     }
+
+    public void addValue()
+    {
+        Log.v(TAG, "add value");
+
+        offsetSize++;
+        showMessageText(" OFFSET VALUE : " + offsetSize);
+    }
+
+    public void deleteValue()
+    {
+        Log.v(TAG, "delete value");
+
+        offsetSize--;
+        showMessageText(" OFFSET VALUE : " + offsetSize);
+    }
+
 
     private void showMessageText(final String message)
     {
@@ -286,7 +309,11 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                readImageFileImpl(readFileName);
+                if (offsetSize < 0) {
+                    readImageFileImpl(readFileName);
+                } else {
+                    readImageFileImpl2nd(readFileName);
+                }
             }
         });
         try
@@ -342,6 +369,72 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
         }
     }
 
+    private void readImageFileImpl2nd(final String readFileName)
+    {
+        try
+        {
+            Log.v(TAG, "readImageFileImpl2nd() : " + readFileName);
+            final String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath() + "/AirA01a/";
+            File filepath = new File(directoryPath.toLowerCase(), readFileName.toLowerCase());
+            InputStream istr = new FileInputStream(filepath);
+
+            byte[] readBuffer = new byte[1024 * 1024];
+            int dataSize = istr.read(readBuffer, 0, readBuffer.length);
+            istr.close();
+
+            for (offsetSize = 4096; offsetSize >= 0; offsetSize--)
+            {
+                try
+                {
+                    Log.v(TAG, "readImageFileImpl2nd() : readSize is " + dataSize + ", offset : " + offsetSize);
+
+                    byte[] buffer = Arrays.copyOfRange(readBuffer, offsetSize, dataSize - offsetSize);
+
+                    // OpenCVのデータ型に変換
+                    Mat rawData = new Mat(1, buffer.length, CV_8UC3);
+                    rawData.put(0, 0, buffer);
+                    Mat decodedImage = Imgcodecs.imdecode(rawData, IMREAD_COLOR);
+
+                    final Bitmap imageData = Bitmap.createBitmap(decodedImage.width(), decodedImage.height(), Bitmap.Config.ARGB_8888);
+                    Utils.matToBitmap(decodedImage, imageData);
+
+                    Log.v(TAG, "readImageFileImpl2nd() : bitmap is " + imageData.getByteCount() + " bytes.");
+
+                    //////  画像表示を更新する　//////
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try
+                            {
+                                // ビットマップイメージを表示する。
+                                ImageView view = activity.findViewById(R.id.information_view);
+                                view.setImageBitmap(imageData);
+                                view.invalidate();
+                            }
+                            catch (Throwable e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    break;
+                }
+                catch (Throwable t)
+                {
+                    t.printStackTrace();
+                }
+            }
+            Log.v(TAG, "readImageFileImpl2nd() is finished.");
+            offsetSize = 0;
+        }
+        catch (Throwable e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+
+
     private Bitmap getBitmap(ReceivedDataHolder receivedData)
     {
         Bitmap bitmap;
@@ -351,10 +444,10 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
 //            final byte[] imageBytes = Arrays.copyOfRange(dataValue, 18, dataValue.length);
 
             // OpenCVのデータ型に変換
-            Mat rawData = new Mat( 1,dataLength, CV_8UC1, dataValue);
+            Mat rawData = new Mat( 1,dataLength, CV_8UC3, dataValue);
             Mat decodedImage = Imgcodecs.imdecode(rawData, IMREAD_COLOR);
             bitmap = Bitmap.createBitmap(decodedImage.width(), decodedImage.height(), Bitmap.Config.ARGB_8888);
-            //org.opencv.android.Utils.matToBitmap(decodedImage, bitmap);
+            org.opencv.android.Utils.matToBitmap(decodedImage, bitmap);
 
             rawData.release();
             decodedImage.release();

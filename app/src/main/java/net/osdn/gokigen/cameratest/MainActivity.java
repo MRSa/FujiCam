@@ -175,6 +175,16 @@ public class MainActivity extends AppCompatActivity
             exitApplication();
             return (true);
         }
+        if (id == R.id.action_add_value)
+        {
+            testTarget.addValue();
+            return (true);
+        }
+        if (id == R.id.action_delete_value)
+        {
+            testTarget.deleteValue();
+            return (true);
+        }
         return super.onOptionsItemSelected(item);
     }
 
