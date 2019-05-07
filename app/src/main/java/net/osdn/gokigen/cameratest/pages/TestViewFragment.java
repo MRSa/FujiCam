@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.osdn.gokigen.cameratest.R;
@@ -55,6 +56,7 @@ public class TestViewFragment extends Fragment
         {
             if (testTarget != null)
             {
+                ImageView imageView = rootView.findViewById(R.id.imageView);
                 Button btn1 = rootView.findViewById(R.id.button1);
                 Button btn2 = rootView.findViewById(R.id.button2);
                 Button btn3 = rootView.findViewById(R.id.button3);
@@ -63,6 +65,7 @@ public class TestViewFragment extends Fragment
                 btn2.setOnClickListener(testTarget);
                 btn3.setOnClickListener(testTarget);
                 btn4.setOnClickListener(testTarget);
+                imageView.setOnTouchListener(testTarget);
             }
         }
         catch (Exception e)

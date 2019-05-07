@@ -3,8 +3,10 @@ package net.osdn.gokigen.cameratest.camtest;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PointF;
 import android.os.Environment;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,7 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 
-public class CamTest implements View.OnClickListener, ILiveViewImage
+public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiveViewImage
 {
     private String TAG = toString();
     private final Activity activity;
@@ -151,8 +153,7 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
                 doShutter();
                 break;
             case R.id.button2:
-                //readImageFile("sampledata1.bin");
-                //showMessageText("show 'sampledata1.bin'.");
+                unlockFocus();
                 break;
             case R.id.button3:
                 //readImageFile("sampledata2.bin");
@@ -182,6 +183,56 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
                     if (!ret)
                     {
                         showMessageText("SHUTTER FAILURE...");
+                    }
+                }
+            });
+            thread.start();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void driveAutoFocus(final PointF point)
+    {
+        if (point == null)
+        {
+            return;
+        }
+        try
+        {
+            Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.drive_af, Snackbar.LENGTH_SHORT).show();
+            showMessageText("AF : " + point.x + "," + point.y);
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean ret = connection.execute_focus_point(point);
+                    if (!ret)
+                    {
+                        showMessageText("Auto Focus FAILURE...");
+                    }
+                }
+            });
+            thread.start();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    private void unlockFocus()
+    {
+        try
+        {
+            Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.unlock_focus, Snackbar.LENGTH_SHORT).show();
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean ret = connection.execute_unlock_focus();
+                    if (!ret)
+                    {
+                        showMessageText("Unlock Focus FAILURE...");
                     }
                 }
             });
@@ -375,6 +426,44 @@ public class CamTest implements View.OnClickListener, ILiveViewImage
             }
 */
             return (imageData);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return (null);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event)
+    {
+        try
+        {
+            int id = v.getId();
+            Log.v(TAG, "onTouch() : " + id);
+            if (event.getAction() == MotionEvent.ACTION_DOWN)
+            {
+                driveAutoFocus(getPointWithEvent(event));
+                return (true);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return (false);
+    }
+
+    private PointF getPointWithEvent(MotionEvent event)
+    {
+        if (event == null)
+        {
+            return (null);
+        }
+        try
+        {
+            ImageView imageView = activity.findViewById(R.id.imageView);
+            return (new PointF(((event.getX() / (float) imageView.getWidth()) * 100.0f), ((event.getY() / (float) imageView.getHeight()) * 100.0f)));
         }
         catch (Exception e)
         {

@@ -11,7 +11,7 @@ class FujiStreamReceiver
     private final String ipAddress;
     private final int portNumber;
     private final ILiveViewImage imageViewer;
-    private static final int WAIT_MS = 75;
+    private static final int WAIT_MS = 80;
     private static final int BUFFER_SIZE = 1280 * 1024 + 8;
     private boolean isStart = false;
 

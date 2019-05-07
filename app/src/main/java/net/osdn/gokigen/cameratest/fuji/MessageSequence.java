@@ -359,4 +359,41 @@ class MessageSequence
         });
     }
 
+
+
+    byte[] execute_focus_lock(byte pointX, byte pointY)
+    {
+        return (new byte[] {
+
+                // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
+                (byte)0x01, (byte)0x00,
+
+                // message_header.type : focus_point (0x9026)
+                (byte)0x26, (byte)0x90,
+
+                // message_id (0～1づつ繰り上がる...
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+
+                // data ...
+                pointY, pointX, (byte)0x00, (byte)0x00,
+
+        });
+    }
+
+
+    byte[] execute_focus_unlock()
+    {
+        return (new byte[] {
+
+                // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
+                (byte)0x01, (byte)0x00,
+
+                // message_header.type : focus_unlock (0x9027)
+                (byte)0x27, (byte)0x90,
+
+                // message_id (0～1づつ繰り上がる...
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+        });
+    }
+
 }

@@ -1,5 +1,6 @@
 package net.osdn.gokigen.cameratest.fuji;
 
+import android.graphics.PointF;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -196,6 +197,42 @@ public class Connection
             Log.v(TAG, " RX [" + indexNumber + "] "  + message);
         }
         System.gc();
+    }
+
+    public boolean execute_focus_point(PointF point)
+    {
+        try
+        {
+            byte x = (byte) (0x000000ff & Math.round(point.x));
+            byte y = (byte) (0x000000ff & Math.round(point.y));
+            Log.v(TAG, "DRIVE AF (" + x + "," + y + ")");
+
+            comm.send_to_camera(sequence.execute_focus_lock(x, y), true);
+
+            ReceivedDataHolder rx_bytes = comm.receive_from_camera();
+            dump_bytes(16, rx_bytes);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return (false);
+    }
+
+    public boolean execute_unlock_focus()
+    {
+        try
+        {
+            comm.send_to_camera(sequence.execute_focus_unlock(), true);
+
+            ReceivedDataHolder rx_bytes = comm.receive_from_camera();
+            dump_bytes(17, rx_bytes);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return (false);
     }
 
     public boolean execute_shutter()
