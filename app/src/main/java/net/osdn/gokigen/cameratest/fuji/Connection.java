@@ -5,16 +5,21 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-public class Connection
+import net.osdn.gokigen.cameratest.fuji.statuses.FujiStatusChecker;
+import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatusRequest;
+
+public class Connection implements IFujiStatusRequest
 {
     private final String TAG = toString();
     private final MessageSequence sequence;
     private final Communication comm;
+    private final FujiStatusChecker statusChecker;
 
     public Connection(@NonNull ILiveViewImage imageViewer)
     {
         this.comm = new Communication(imageViewer);
         this.sequence = new MessageSequence();
+        this.statusChecker = new FujiStatusChecker(this);
     }
 
     public boolean start_connect()
@@ -23,7 +28,12 @@ public class Connection
 
         if (connect_to_camera())
         {
-            ret = get_current_settings();
+            ret = requestStatus();
+            if (ret)
+            {
+                // 定期監視の開始
+                statusChecker.start();
+            }
         }
         return (ret);
     }
@@ -133,6 +143,7 @@ public class Connection
             comm.send_to_camera(sequence.reset_message(), true);
             ReceivedDataHolder rx_bytes = comm.receive_from_camera();
             dump_bytes(0, rx_bytes);
+            statusChecker.stop();
             Thread.sleep(150);
         }
         catch (Exception e)
@@ -155,19 +166,24 @@ public class Connection
         }
     }
 
-    private boolean get_current_settings()
+    @Override
+    public boolean requestStatus()
     {
         try
         {
             comm.send_to_camera(sequence.status_request_message(), true);
-
+            //Thread.sleep(30);// ちょっと待つ
             ReceivedDataHolder rx_bytes = comm.receive_from_camera();
+            if (rx_bytes.getData().length > 0) {
+                statusChecker.statusReceived(rx_bytes);
+            }
             dump_bytes(12, rx_bytes);
 
             // なんで２回...　でもやってみる
             rx_bytes = comm.receive_from_camera();
             dump_bytes(13, rx_bytes);
 
+            return (true);
         }
         catch (Exception e)
         {

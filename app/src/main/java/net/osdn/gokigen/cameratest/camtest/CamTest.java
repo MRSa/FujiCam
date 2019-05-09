@@ -463,7 +463,7 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
         try
         {
             ImageView imageView = activity.findViewById(R.id.imageView);
-            return (new PointF(((event.getX() / (float) imageView.getWidth()) * 100.0f), ((event.getY() / (float) imageView.getHeight()) * 100.0f)));
+            return (new PointF(((event.getX() / (float) imageView.getWidth()) * 255.0f), ((event.getY() / (float) imageView.getHeight()) * 255.0f)));
         }
         catch (Exception e)
         {
