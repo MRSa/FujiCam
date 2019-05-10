@@ -7,5 +7,4 @@ public interface IFujiStatusReceive
     void start();
     void stop();
     void statusReceived(ReceivedDataHolder data);
-    void statusReceived2nd(ReceivedDataHolder data);
 }

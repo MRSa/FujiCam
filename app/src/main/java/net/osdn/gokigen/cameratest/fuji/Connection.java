@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import net.osdn.gokigen.cameratest.fuji.statuses.FujiStatusChecker;
+import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatusNotify;
 import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatusRequest;
 
 public class Connection implements IFujiStatusRequest
@@ -15,11 +16,11 @@ public class Connection implements IFujiStatusRequest
     private final Communication comm;
     private final FujiStatusChecker statusChecker;
 
-    public Connection(@NonNull ILiveViewImage imageViewer)
+    public Connection(@NonNull ILiveViewImage imageViewer, @NonNull IFujiStatusNotify notify)
     {
         this.comm = new Communication(imageViewer);
         this.sequence = new MessageSequence();
-        this.statusChecker = new FujiStatusChecker(this);
+        this.statusChecker = new FujiStatusChecker(this, notify);
     }
 
     public boolean start_connect()
@@ -172,16 +173,13 @@ public class Connection implements IFujiStatusRequest
         try
         {
             comm.send_to_camera(sequence.status_request_message(), true);
-            //Thread.sleep(30);// ちょっと待つ
             ReceivedDataHolder rx_bytes = comm.receive_from_camera();
-            if (rx_bytes.getData().length > 0) {
+            if (rx_bytes.getData().length > 0)
+            {
+                // 受信したステータス情報を渡す
                 statusChecker.statusReceived(rx_bytes);
             }
-            dump_bytes(12, rx_bytes);
-
-            // なんで２回...　でもやってみる
-            rx_bytes = comm.receive_from_camera();
-            dump_bytes(13, rx_bytes);
+            //dump_bytes(12, rx_bytes);
 
             return (true);
         }
@@ -259,10 +257,6 @@ public class Connection implements IFujiStatusRequest
 
             ReceivedDataHolder rx_bytes = comm.receive_from_camera();
             dump_bytes(14, rx_bytes);
-
-            // なんで２回受信...　でもやってみる
-            rx_bytes = comm.receive_from_camera();
-            dump_bytes(15, rx_bytes);
         }
         catch (Exception e)
         {

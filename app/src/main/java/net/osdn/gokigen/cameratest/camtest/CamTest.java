@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
-import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,26 +16,24 @@ import net.osdn.gokigen.cameratest.R;
 import net.osdn.gokigen.cameratest.fuji.Connection;
 import net.osdn.gokigen.cameratest.fuji.ILiveViewImage;
 import net.osdn.gokigen.cameratest.fuji.ReceivedDataHolder;
+import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatus;
+import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatusNotify;
 
 import androidx.annotation.NonNull;
 
-import java.io.File;
-import java.io.FileInputStream;
-
-
-public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiveViewImage
+public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiveViewImage, IFujiStatusNotify
 {
     private String TAG = toString();
     private final Activity activity;
     private TextView textview;
     private Connection connection;
     //private FileOutputStream outputStream = null;
-    private int offsetSize = 18;  // 4byte: データサイズ、14byte: (謎の)ヘッダ
+    private static final int offsetSize = 18;  // 4byte: データサイズ、14byte: (謎の)ヘッダ
 
     public CamTest(@NonNull Activity activity)
     {
         this.activity = activity;
-        this.connection = new Connection(this);
+        this.connection = new Connection(this, this);
     }
 
     public void connect()
@@ -284,130 +281,6 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
         }
     }
 
-    @Override
-    public void updateImage(final Bitmap bitmap)
-    {
-        try
-        {
-            Log.v(TAG, "bitmap : " + bitmap.getByteCount() + " bytes.");
-
-            //////  画像を更新する
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try
-                    {
-                        // ビットマップイメージを表示する。
-                        ImageView view = activity.findViewById(R.id.imageView);
-                        view.setImageBitmap(bitmap);
-                        view.invalidate();
-                    }
-                    catch (Throwable e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-        catch (Throwable e)
-        {
-            e.printStackTrace();
-        }
-    }
-/*
-    private void outputFile(ReceivedDataHolder receivedData)
-    {
-        try
-        {
-            if (outputStream != null)
-            {
-                final byte[] byteData = receivedData.getData();
-                outputStream.write(byteData, 0, byteData.length);
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private void prepareFile()
-    {
-        try
-        {
-            final String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath() + "/AirA01a/";
-            final String outputFileName = "camtest.bin";
-            File filepath = new File(directoryPath.toLowerCase(), outputFileName.toLowerCase());
-            outputStream = new FileOutputStream(filepath);
-          }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            outputStream = null;
-        }
-    }
-
-    private void readImageFile(final String readFileName)
-    {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                    readImageFileImpl(readFileName);
-            }
-        });
-        try
-        {
-            thread.start();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private void readImageFileImpl(final String readFileName)
-    {
-        try
-        {
-            Log.v(TAG, "readImageFileImpl() : " + readFileName);
-            final String directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath() + "/AirA01a/";
-            File filepath = new File(directoryPath.toLowerCase(), readFileName.toLowerCase());
-            FileInputStream istr = new FileInputStream(filepath);
-            final Bitmap imageData = BitmapFactory.decodeStream(istr);
-            istr.close();
-            if (imageData == null)
-            {
-                Log.v(TAG, "readImageFileImpl() : bitmap is NULL.");
-            }
-            else
-            {
-                Log.v(TAG, "readImageFileImpl() : bitmap is " + imageData.getByteCount() + " bytes.");
-            }
-            //////  画像表示を更新する　//////
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try
-                    {
-                        // ビットマップイメージを表示する。
-                        ImageView view = activity.findViewById(R.id.information_view);
-                        view.setImageBitmap(imageData);
-                        view.invalidate();
-                    }
-                    catch (Throwable e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-        catch (Throwable e)
-        {
-            e.printStackTrace();
-        }
-    }
-*/
-
     private Bitmap getBitmap(ReceivedDataHolder receivedData)
     {
         try
@@ -419,12 +292,6 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
                 Log.v(TAG, "getBitmap() : NULL. (offset : " + offsetSize + ")");
                 return (null);
             }
-/*
-            else
-            {
-                Log.v(TAG, "getBitmap() : " + imageData.getByteCount() + "bytes. (offset : " + offsetSize + ")");
-            }
-*/
             return (imageData);
         }
         catch (Exception e)
@@ -470,5 +337,42 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
             e.printStackTrace();
         }
         return (null);
+    }
+
+    @Override
+    public void statusUpdated(final IFujiStatus cameraStatus)
+    {
+        try
+        {
+            Log.v(TAG, "statusUpdated()");
+
+            // 情報エリアの内容を更新する
+            final InformationView view = activity.findViewById(R.id.information_view);
+            if (view == null)
+            {
+                return;
+            }
+            view.drawInformation(cameraStatus);
+
+            //////  画像を更新する
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try
+                    {
+                        view.invalidate();
+                    }
+                    catch (Throwable e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        catch (Throwable e)
+        {
+            e.printStackTrace();
+        }
+
     }
 }
