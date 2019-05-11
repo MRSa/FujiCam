@@ -73,33 +73,26 @@ public class FujiStatusChecker implements IFujiStatusReceive
         threadIsRunning = false;
     }
 
+
+
     private void statusReceivedImpl(byte[] data)
     {
         boolean isStatusUpdated = false;
         try
         {
-            Log.v(TAG, "status Received. " + data.length + " bytes.");
+            int nofStatus = (data[13] * 256) + data[12];
+            Log.v(TAG, "status Received. " + data.length + " bytes. [status : " + nofStatus + "]");
 
-/*
-RX [00] 7a 00 00 00 02 00 15 10
-RX [01] b1 00 00 00 12 00 1b d2
-RX [02] 00 00 00 00 0c 50 02 00
-RX [03] 00 00 12 50 00 00 00 00
-RX [04] 29 d2 67 04 00 00 2a d2
-RX [05] a1 06 00 00 0e 50 03 00
-RX [06] 00 00 01 50 03 00 00 00
-RX [07] 7c d1 04 04 02 03 09 d2
-RX [08] 01 00 00 00 10 50 b3 fe
-RX [09] ff ff 05 50 02 00 00 00
-RX [10] 28 d0 00 00 00 00 0a 50
-RX [11] 01 80 00 00 41 d2 0a 00
-RX [12] 00 00 18 d0 04 00 00 00
-RX [13] 07 50 90 01 00 00 01 d0
-RX [14] 03 00 00 00 2a d0 40 06
-RX [15] 00 80 0c 00 00 00 03 00
-RX [16] 01 20 b1 00 00 00
-*/
-
+            int statusCount = 0;
+            int index = 14;
+            while ((statusCount < nofStatus)&&(index < data.length))
+            {
+                int dataId = ((((int)data[index + 1]) & 0xff) * 256) + (((int) data[index]) & 0xff);
+                statusHolder.updateValue(dataId, data[index + 2], data[index + 3], data[index +4], data[index + 5]);
+                index = index + 6;
+                statusCount++;
+                isStatusUpdated = true;
+            }
             if (isStatusUpdated)
             {
                 notify.statusUpdated(statusHolder);

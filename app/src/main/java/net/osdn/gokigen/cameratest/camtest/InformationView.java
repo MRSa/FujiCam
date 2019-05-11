@@ -5,14 +5,22 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
+import net.osdn.gokigen.cameratest.fuji.Properties;
 import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatus;
 
 public class InformationView extends AppCompatImageView
 {
-    String message = "AAAAA";
+    private final String TAG = toString();
+    private int focusPoint;
+    private int sd_remain_size;
+    private int shooting_mode;
+    private int focus_lock;
+    private int battery_level;
+    private int iso;
 
     public InformationView(Context context) {
         super(context);
@@ -53,7 +61,15 @@ public class InformationView extends AppCompatImageView
         framePaint.setStyle(Paint.Style.STROKE);
         framePaint.setColor(Color.WHITE);
 
+        String message = "SD : " + sd_remain_size + " SHT : " + shooting_mode + " BATT: " + battery_level + " ISO : " + iso;
+        canvas.drawText(message, centerX, centerY - 50, framePaint);
+        Log.v(TAG, message);
+
+
+        message = "FOCUS : " + focusPoint + " F.LOCK : " + focus_lock;
         canvas.drawText(message, centerX, centerY, framePaint);
+        Log.v(TAG, message);
+
     }
 
     /**
@@ -63,8 +79,12 @@ public class InformationView extends AppCompatImageView
      */
     public void drawInformation(IFujiStatus cameraStatus)
     {
-
-
+        focusPoint = cameraStatus.getValue(Properties.FOCUS_POINT);
+        sd_remain_size = cameraStatus.getValue(Properties.SDCARD_REMAIN_SIZE);
+        shooting_mode = cameraStatus.getValue(Properties.SHOOTING_MODE);
+        focus_lock = cameraStatus.getValue(Properties.FOCUS_LOCK);
+        battery_level = cameraStatus.getValue(Properties.BATTERY_LEVEL);
+        iso = cameraStatus.getValue(Properties.ISO);
     }
 
 }
