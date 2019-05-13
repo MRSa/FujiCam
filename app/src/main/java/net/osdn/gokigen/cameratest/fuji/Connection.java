@@ -179,7 +179,7 @@ public class Connection implements IFujiStatusRequest
                 // 受信したステータス情報を渡す
                 statusChecker.statusReceived(rx_bytes);
             }
-            //dump_bytes(12, rx_bytes);
+            dump_bytes(12, rx_bytes);
 
             return (true);
         }

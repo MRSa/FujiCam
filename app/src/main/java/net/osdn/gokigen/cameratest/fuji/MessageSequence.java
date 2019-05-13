@@ -2,32 +2,17 @@ package net.osdn.gokigen.cameratest.fuji;
 
 class MessageSequence
 {
-    static final int HELLO = 0x0000;
-
-    static final int START = 0x1002;
-    static final int STOP = 0x1003;
 
     static final int IMAGE_INFO = 0x1008;
     static final int THUMBNAIL = 0x100a;
 
-    static final int SHUTTER = 0x100e;
-
-    static final int SINGLE_PART = 0x1015;
-    static final int DOUBLE_PART = 0x1016;
-
     static final int FULL_IMAGE = 0x101b;
-    static final int CAMERA_REMOTE = 0x101c;
-
     static final int CAMERA_LAST_IMAGE = 0x9022;
-
-    static final int FOCUS_POINT = 0x9026;
-    static final int FOCUS_UNLOCK = 0x9027;
 
     static final int CAMERA_CAPABILITIES = 0x902b;
 
     static final int SHUTTER_SPEED = 0x902c;
     static final int APERTURE = 0x902d;
-    static final int EXPOSURE_CORRECTION = 0x902e;
 
     byte[] registration_message()
     {
@@ -52,11 +37,24 @@ class MessageSequence
         });
     }
 
+    byte[] stop_message()
+    {
+        return (new byte[] {
+                // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
+                (byte)0x01, (byte)0x00,
+
+                // message_header.type : STOP (0x1003)
+                (byte)0x03, (byte)0x10,
+
+                // message_id (0～1づつ繰り上がる)
+                (byte)0x01, (byte)0x00, (byte)0x00, (byte)0x00,
+        });
+    }
+
     byte[] reset_message()
     {
         return (new byte[] { (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff, });
     }
-
 
     byte[] hello_message()
     {
@@ -69,15 +67,10 @@ class MessageSequence
     byte[] start_message()
     {
         return (new byte[] {
-/*
-                //  現物...
-                (byte) 0x01, (byte) 0x00, (byte) 0x02, (byte) 0x10, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-*/
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : START (0x1002)
+                // message_header.type : START (0x1002)  : OpenSession
                 (byte)0x02, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる)
@@ -91,15 +84,10 @@ class MessageSequence
     byte[] start_message2()
     {
         return (new byte[] {
-/*
-                //  現物...
-                (byte) 0x01, (byte) 0x00, (byte) 0x15, (byte) 0x10, (byte) 0x02, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x12, (byte) 0xd2, (byte) 0x00, (byte) 0x00,
-*/
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : single_part (0x1015)
+                // message_header.type : single_part (0x1015) : GetDevicePropValue
                 (byte)0x15, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる)
@@ -114,15 +102,10 @@ class MessageSequence
     byte[] start_message3_1()
     {
         return (new byte[] {
-/*
-                //  現物...
-                (byte) 0x01, (byte) 0x00, (byte) 0x16, (byte) 0x10, (byte) 0x03, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x01, (byte) 0xdf, (byte) 0x00, (byte) 0x00,
-*/
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : two_part (0x1016)
+                // message_header.type : two_part (0x1016) : SetDevicePropValue
                 (byte)0x16, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる)
@@ -137,15 +120,10 @@ class MessageSequence
     byte[] start_message3_2()
     {
         return (new byte[] {
-/*
-                //  現物...
-                (byte) 0x02, (byte) 0x00, (byte) 0x16, (byte) 0x10, (byte) 0x03, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x05, (byte) 0x00,
-*/
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x02, (byte)0x00,
 
-                // message_header.type : two_part (0x1016)
+                // message_header.type : two_part (0x1016) : SetDevicePropValue
                 (byte)0x16, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる...けど two-part messageなので同じ)
@@ -161,15 +139,10 @@ class MessageSequence
     byte[] start_message4()
     {
         return (new byte[] {
-/*
-                //  現物...
-                (byte) 0x01, (byte) 0x00, (byte) 0x15, (byte) 0x10, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x24, (byte) 0xdf, (byte) 0x00, (byte) 0x00,
-*/
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : single_part (0x1015)
+                // message_header.type : single_part (0x1015)  : GetDevicePropValue
                 (byte)0x15, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる)
@@ -184,15 +157,10 @@ class MessageSequence
     byte[] start_message5_1()
     {
         return (new byte[] {
-/*
-                //  現物...
-                (byte) 0x01, (byte) 0x00, (byte) 0x16, (byte) 0x10, (byte) 0x05, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x24, (byte) 0xdf, (byte) 0x00, (byte) 0x00,
-*/
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : two_part (0x1016)
+                // message_header.type : two_part (0x1016)  : SetDevicePropValue
                 (byte)0x16, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる)
@@ -207,15 +175,10 @@ class MessageSequence
     byte[] start_message5_2()
     {
         return (new byte[] {
-/*
-                //  現物...
-                (byte) 0x02, (byte) 0x00, (byte) 0x16, (byte) 0x10, (byte) 0x05, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x07, (byte) 0x00, (byte) 0x02, (byte) 0x00,
-*/
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x02, (byte)0x00,
 
-                // message_header.type : two_part (0x1016)
+                // message_header.type : two_part (0x1016)  : SetDevicePropValue
                 (byte)0x16, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる...けど two-part messageなので同じ)
@@ -230,15 +193,10 @@ class MessageSequence
     byte[] start_message6()
     {
         return (new byte[] {
-/*
-                //  現物...
-                (byte) 0x01, (byte) 0x00, (byte) 0x15, (byte) 0x10, (byte) 0x06, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x12, (byte) 0xd2, (byte) 0x00, (byte) 0x00,
-*/
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : single_part (0x1015)
+                // message_header.type : single_part (0x1015)  : GetDevicePropValue
                 (byte)0x15, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる...)
@@ -254,10 +212,6 @@ class MessageSequence
     byte[] start_message7()
     {
         return (new byte[] {
-/*
-                //  現物...
-                (byte) 0x01, (byte) 0x00, (byte) 0x2b, (byte) 0x90, (byte) 0x07, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-*/
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
@@ -274,15 +228,10 @@ class MessageSequence
     byte[] start_message8()
     {
         return (new byte[] {
-/*
-                //  現物...
-                (byte) 0x01, (byte) 0x00, (byte) 0x15, (byte) 0x10, (byte) 0x08, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x12, (byte) 0xd2, (byte) 0x00, (byte) 0x00
-*/
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : single_part (0x1015)
+                // message_header.type : single_part (0x1015) : GetDevicePropValue
                 (byte)0x15, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる...)
@@ -299,15 +248,10 @@ class MessageSequence
     byte[] start_message9()
     {
         return (new byte[] {
-/*
-                //  現物...
-                (byte) 0x01, (byte) 0x00, (byte) 0x1c, (byte) 0x10, (byte) 0x09, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
-*/
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : camera_remote (0x101c)
+                // message_header.type : camera_remote (0x101c)  : InitiateOpenCapture
                 (byte)0x1c, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる...)
@@ -328,7 +272,7 @@ class MessageSequence
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : single_part (0x1015)
+                // message_header.type : single_part (0x1015) : GetDevicePropValue
                 (byte)0x15, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる...)
@@ -375,7 +319,8 @@ class MessageSequence
                 (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
 
                 // data ...
-                pointY, pointX, (byte)0x00, (byte)0x00,
+                pointY, pointX, (byte)0x02, (byte)0x03,
+                //pointY, pointX, (byte)0x00, (byte)0x00,
 
         });
     }
@@ -396,4 +341,93 @@ class MessageSequence
         });
     }
 
+    byte[] update_aperture(boolean isIncrement)
+    {
+        return (new byte[] {
+
+                // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
+                (byte)0x01, (byte)0x00,
+
+                // message_header.type : aperture (0x5007)
+                (byte)0x07, (byte)0x50,
+
+                // message_id (0～1づつ繰り上がる...
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+
+                // data ...
+                (isIncrement)? (byte) 0x01 : (byte)0x00,  (byte)0x00, (byte)0x00, (byte)0x00,
+        });
+
+    }
+
+    byte[] update_shutter_speed(boolean isIncrement)
+    {
+        return (new byte[] {
+
+                // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
+                (byte)0x01, (byte)0x00,
+
+                // message_header.type : aperture (0xd240)
+                (byte)0x40, (byte)0xd2,
+
+                // message_id (0～1づつ繰り上がる...
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+
+                // data ...
+                (isIncrement)? (byte) 0x01 : (byte)0x00,  (byte)0x00, (byte)0x00, (byte)0x00,
+        });
+
+    }
+
+    byte[] update_exposure(boolean isIncrement)
+    {
+        return (new byte[] {
+
+                // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
+                (byte)0x01, (byte)0x00,
+
+                // message_header.type : aperture (0x902e)
+                (byte)0x2e, (byte)0x90,
+
+                // message_id (0～1づつ繰り上がる...
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+
+                // data ...
+                (isIncrement)? (byte) 0x01 : (byte)0x00,  (byte)0x00, (byte)0x00, (byte)0x00,
+        });
+    }
+
+    byte[] update_property_1(byte high, byte low)
+    {
+        return (new byte[] {
+                // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
+                (byte)0x01, (byte)0x00,
+
+                // message_header.type : two_part (0x1016)  : SetDevicePropValue
+                (byte)0x16, (byte)0x10,
+
+                // message_id (0～1づつ繰り上がる)
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+
+                // data ...
+               low, high,
+        });
+    }
+
+    byte[] update_property_2(byte data0, byte data1, byte data2, byte data3)
+    {
+        return (new byte[] {
+                // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
+                (byte)0x02, (byte)0x00,
+
+                // message_header.type : two_part (0x1016)  : SetDevicePropValue
+                (byte)0x16, (byte)0x10,
+
+                // message_id (0～1づつ繰り上がる...けど two-part messageなので同じ)
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+
+                // data ...
+                data3, data2, data1, data0,
+        });
+    }
 }
