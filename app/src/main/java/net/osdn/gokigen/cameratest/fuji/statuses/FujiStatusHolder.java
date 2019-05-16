@@ -21,7 +21,7 @@ class FujiStatusHolder implements IFujiStatus
     {
         int value = ((((int) data3)&0xff) << 24) +  ((((int) data2)&0xff) << 16) +  ((((int) data1)&0xff) << 8) + (((int) data0) & 0xff);
 
-        Log.v(TAG, "updateValue() : " + id + "[" + value + "]");
+        //Log.v(TAG, "updateValue() : " + id + "[" + value + "]");
         statusHolder.put(id, value);
     }
 

@@ -81,7 +81,7 @@ public class FujiStatusChecker implements IFujiStatusReceive
         try
         {
             int nofStatus = (data[13] * 256) + data[12];
-            Log.v(TAG, "status Received. " + data.length + " bytes. [status : " + nofStatus + "]");
+            //Log.v(TAG, "status Received. " + data.length + " bytes. [status : " + nofStatus + "]");
 
             int statusCount = 0;
             int index = 14;

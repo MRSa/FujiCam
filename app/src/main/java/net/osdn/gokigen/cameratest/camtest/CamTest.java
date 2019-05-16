@@ -30,6 +30,12 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
     //private FileOutputStream outputStream = null;
     private static final int offsetSize = 18;  // 4byte: データサイズ、14byte: (謎の)ヘッダ
 
+    private float maxPointLimitWidth = 7.0f;
+    private float maxPointLimitHeight = 7.0f;
+    private float widthOffset = 1.0f;
+    private float heightOffset = 1.0f;
+
+
     public CamTest(@NonNull Activity activity)
     {
         this.activity = activity;
@@ -191,6 +197,19 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
         }
     }
 
+    public void setFocusLimitWidth(float max, float offset)
+    {
+        maxPointLimitWidth = max;
+        widthOffset = offset;
+    }
+
+
+    public void setFocusLimitHeight(float max, float offset)
+    {
+        maxPointLimitHeight = max;
+        heightOffset = offset;
+    }
+
     private void driveAutoFocus(final PointF point)
     {
         if (point == null)
@@ -246,11 +265,11 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
     {
         try
         {
-            final byte[] dataValue = receivedData.getData();
+            //final byte[] dataValue = receivedData.getData();
             //byte[] startJpegMarker = {(byte)0xff, (byte)0xd8};
             //byte[] endJpegMarker   = {(byte)0xff, (byte)0xd9};
 
-            Log.v(TAG, "Image : "+ dataValue.length + " bytes.");
+            //Log.v(TAG, "Image : "+ dataValue.length + " bytes.");
 
             // ダミーの記録ファイルが開いていたらファイルに書いておく。
             //outputFile(receivedData);
@@ -259,20 +278,27 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
             final Bitmap imageData = getBitmap(receivedData);
             if (imageData != null)
             {
-                //////  画像を更新する
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            // ビットマップイメージを表示する。
-                            ImageView view = activity.findViewById(R.id.imageView);
-                            view.setImageBitmap(imageData);
-                            view.invalidate();
-                        } catch (Throwable e) {
-                            e.printStackTrace();
+                // int width = imageData.getWidth();
+                // int height = imageData.getHeight();
+                //if ((width > 300)&&(height > 300))
+                {
+                    //Log.v(TAG, "bitmap (" + width + "," + height + ")");
+
+                    //////  表示画像を更新する
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                // ビットマップイメージを表示する。
+                                ImageView view = activity.findViewById(R.id.imageView);
+                                view.setImageBitmap(imageData);
+                                view.invalidate();
+                            } catch (Throwable e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         }
         catch (Throwable e)
@@ -289,7 +315,7 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
             final Bitmap imageData = BitmapFactory.decodeByteArray(data, offsetSize, (data.length - offsetSize));
             if (imageData == null)
             {
-                Log.v(TAG, "getBitmap() : NULL. (offset : " + offsetSize + ")");
+                //Log.v(TAG, "getBitmap() : NULL. (offset : " + offsetSize + ")");
                 return (null);
             }
             return (imageData);
@@ -330,7 +356,7 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
         try
         {
             ImageView imageView = activity.findViewById(R.id.imageView);
-            return (new PointF(((event.getX() / (float) imageView.getWidth()) * 255.0f), ((event.getY() / (float) imageView.getHeight()) * 255.0f)));
+            return (new PointF((((event.getX() / (float) imageView.getWidth()) * maxPointLimitWidth) + widthOffset), (((event.getY() / (float) imageView.getHeight()) * maxPointLimitHeight) + heightOffset)));
         }
         catch (Exception e)
         {
@@ -344,7 +370,7 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
     {
         try
         {
-            Log.v(TAG, "statusUpdated()");
+            //Log.v(TAG, "statusUpdated()");
 
             // 情報エリアの内容を更新する
             final InformationView view = activity.findViewById(R.id.information_view);
