@@ -2,7 +2,11 @@ package net.osdn.gokigen.cameratest.fuji.statuses;
 
 import net.osdn.gokigen.cameratest.fuji.ReceivedDataHolder;
 
-public interface IFujiStatusReceive
+/**
+ *   カメラのステータスを受信する
+ *
+ */
+public interface IFujiStatusReceiver
 {
     void start();
     void stop();

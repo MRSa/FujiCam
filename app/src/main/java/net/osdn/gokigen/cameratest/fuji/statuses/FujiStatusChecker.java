@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 
 import net.osdn.gokigen.cameratest.fuji.ReceivedDataHolder;
 
-public class FujiStatusChecker implements IFujiStatusReceive
+public class FujiStatusChecker implements IFujiStatusReceiver
 {
     private final String TAG = toString();
     private final IFujiStatusRequest comm;

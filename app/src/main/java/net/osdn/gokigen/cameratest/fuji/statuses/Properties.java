@@ -1,4 +1,4 @@
-package net.osdn.gokigen.cameratest.fuji;
+package net.osdn.gokigen.cameratest.fuji.statuses;
 
 public class Properties
 {

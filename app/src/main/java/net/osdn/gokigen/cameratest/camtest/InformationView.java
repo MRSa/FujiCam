@@ -9,7 +9,7 @@ import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
-import net.osdn.gokigen.cameratest.fuji.Properties;
+import net.osdn.gokigen.cameratest.fuji.statuses.Properties;
 import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatus;
 
 public class InformationView extends AppCompatImageView
@@ -18,7 +18,7 @@ public class InformationView extends AppCompatImageView
     private int focusPoint;
     private int sd_remain_size;
     private int shooting_mode;
-    private int focus_lock;
+    private boolean focus_lock;
     private int battery_level;
     private int iso;
 
@@ -61,12 +61,24 @@ public class InformationView extends AppCompatImageView
         framePaint.setStyle(Paint.Style.STROKE);
         framePaint.setColor(Color.WHITE);
 
-        String message = "SD : " + sd_remain_size + " SHT : " + shooting_mode + " BATT: " + battery_level + " ISO : " + iso;
+        String message = "SD : " + sd_remain_size + " SHT : " + shooting_mode  + " ISO : " + iso  + " BATT: ";
+        if (battery_level < 0)
+        {
+            message = message + "???";
+        }
+        else
+        {
+            message = message + battery_level + "% ";
+        }
         canvas.drawText(message, centerX, centerY - 50, framePaint);
         Log.v(TAG, message);
 
 
-        message = "FOCUS : " + focusPoint + " F.LOCK : " + focus_lock;
+        message = "FOCUS : " + focusPoint;
+        if (focus_lock)
+        {
+            message = message + " (LOCKED)";
+        }
         canvas.drawText(message, centerX, centerY, framePaint);
         Log.v(TAG, message);
 
@@ -82,8 +94,8 @@ public class InformationView extends AppCompatImageView
         focusPoint = cameraStatus.getValue(Properties.FOCUS_POINT);
         sd_remain_size = cameraStatus.getValue(Properties.SDCARD_REMAIN_SIZE);
         shooting_mode = cameraStatus.getValue(Properties.SHOOTING_MODE);
-        focus_lock = cameraStatus.getValue(Properties.FOCUS_LOCK);
-        battery_level = cameraStatus.getValue(Properties.BATTERY_LEVEL);
+        focus_lock = cameraStatus.isFocusLocked();
+        battery_level = cameraStatus.getBatteryLevel();
         iso = cameraStatus.getValue(Properties.ISO);
     }
 
