@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -15,10 +16,11 @@ import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatus;
 public class InformationView extends AppCompatImageView
 {
     private final String TAG = toString();
-    private int focusPoint;
+    private Point focusPoint;
     private int sd_remain_size;
-    private int shooting_mode;
+    private String shooting_mode;
     private boolean focus_lock;
+    private boolean isDeviceError;
     private int battery_level;
     private int iso;
 
@@ -50,38 +52,51 @@ public class InformationView extends AppCompatImageView
 
     private void drawCanvas(Canvas canvas)
     {
-        // Clears the canvas.
-        canvas.drawARGB(255, 0, 0, 0);
-
-        // Rotates the image.
-        int centerX = canvas.getWidth() / 2;
-        int centerY = canvas.getHeight() / 2;
-
-        Paint framePaint = new Paint();
-        framePaint.setStyle(Paint.Style.STROKE);
-        framePaint.setColor(Color.WHITE);
-
-        String message = "SD : " + sd_remain_size + " SHT : " + shooting_mode  + " ISO : " + iso  + " BATT: ";
-        if (battery_level < 0)
+        try
         {
-            message = message + "???";
+            // Clears the canvas.
+            canvas.drawARGB(255, 0, 0, 0);
+
+            // Rotates the image.
+            int centerX = canvas.getWidth() / 2;
+            int centerY = canvas.getHeight() / 2;
+
+            Paint framePaint = new Paint();
+            framePaint.setStyle(Paint.Style.STROKE);
+            framePaint.setColor(Color.WHITE);
+
+            String message = shooting_mode + " REMAIN : " + sd_remain_size  + " ISO : " + iso  + " BATT: ";
+            if (battery_level < 0)
+            {
+                message = message + "???";
+            }
+            else
+            {
+                message = message + battery_level + "% ";
+            }
+            canvas.drawText(message, centerX, centerY - 50, framePaint);
+            Log.v(TAG, message);
+
+
+            if (focusPoint != null)
+            {
+                message = "FOCUS : [" + focusPoint.x + "," + focusPoint.y + "] ";
+            }
+            if (focus_lock)
+            {
+                message = message + " (LOCKED)";
+            }
+            if (isDeviceError)
+            {
+                message = message + " ERROR";
+            }
+            canvas.drawText(message, centerX, centerY, framePaint);
+            Log.v(TAG, message);
         }
-        else
+        catch (Exception e)
         {
-            message = message + battery_level + "% ";
+            e.printStackTrace();
         }
-        canvas.drawText(message, centerX, centerY - 50, framePaint);
-        Log.v(TAG, message);
-
-
-        message = "FOCUS : " + focusPoint;
-        if (focus_lock)
-        {
-            message = message + " (LOCKED)";
-        }
-        canvas.drawText(message, centerX, centerY, framePaint);
-        Log.v(TAG, message);
-
     }
 
     /**
@@ -91,11 +106,12 @@ public class InformationView extends AppCompatImageView
      */
     public void drawInformation(IFujiStatus cameraStatus)
     {
-        focusPoint = cameraStatus.getValue(Properties.FOCUS_POINT);
-        sd_remain_size = cameraStatus.getValue(Properties.SDCARD_REMAIN_SIZE);
-        shooting_mode = cameraStatus.getValue(Properties.SHOOTING_MODE);
+        focusPoint = cameraStatus.getFocusPoint();
+        sd_remain_size = cameraStatus.getRemainImageSpace();
+        shooting_mode = cameraStatus.getShootingMode();
         focus_lock = cameraStatus.isFocusLocked();
         battery_level = cameraStatus.getBatteryLevel();
+        isDeviceError = cameraStatus.isDeviceError();
         iso = cameraStatus.getValue(Properties.ISO);
     }
 

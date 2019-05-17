@@ -2,6 +2,14 @@ package net.osdn.gokigen.cameratest.fuji;
 
 public class PropertyValues
 {
+    public static final int SHOOTING_MANUAL  =1;
+    public static final int SHOOTING_PROGRAM  =2;
+    public static final int SHOOTING_APERTURE  =3;
+    public static final int SHOOTING_SHUTTER  =4;
+    public static final int SHOOTING_CUSTOM  =5;
+    public static final int SHOOTING_AUTO  =6;
+
+
     static final int IMAGE_FORMAT_FINE =2;
     static final int IMAGE_FORMAT_NORMAL =3;
     static final int IMAGE_FORMAT_FINE_RAW  =4;
@@ -51,11 +59,6 @@ public class PropertyValues
     static final int WHITE_BALANCE_CUSTOM  =0X800c;
     static final int MOVIE_BUTTON_UNAVAILABLE  =0;
     static final int MOVIE_BUTTON_AVAILABLE  =1;
-    static final int SHOOTING_MANUAL  =1;
-    static final int SHOOTING_PROGRAM  =2;
-    static final int SHOOTING_APERTURE_PRIORITY  =3;
-    static final int SHOOTING_SHUTTER_PRIORITY  =4;
-    static final int SHOOTING_AUTO  =6;
     static final int BATTERY_CRITICAL  =1;
     static final int BATTERY_ONE_BAR  =2;
     static final int BATTERY_TWO_BAR  =3;

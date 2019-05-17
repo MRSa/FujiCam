@@ -2,6 +2,7 @@ package net.osdn.gokigen.cameratest.fuji.statuses;
 
 public class Properties
 {
+    public static final int BATTERY_LEVEL         = 0x5001;
     public static final int WHITE_BALANCE = 0x5005;
     public static final int APERTURE = 0x5007;
     public static final int FOCUS_MODE            = 0x500a;
@@ -22,7 +23,7 @@ public class Properties
     public static final int MOVIE_REMAINING_TIME  = 0xd22a;
     public static final int SHUTTER_SPEED         = 0xd240;
     public static final int IMAGE_ASPECT          = 0xd241;
-    public static final int BATTERY_LEVEL         = 0xd242;
+    public static final int BATTERY_LEVEL_2       = 0xd242;
     public static final int UNKNOWN  = 0xffff;
 
 }
