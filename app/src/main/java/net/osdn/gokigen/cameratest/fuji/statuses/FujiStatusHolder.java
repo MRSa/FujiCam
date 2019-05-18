@@ -1,27 +1,11 @@
 package net.osdn.gokigen.cameratest.fuji.statuses;
 
 import android.graphics.Point;
-import android.graphics.PointF;
 import android.util.SparseIntArray;
 
-import static net.osdn.gokigen.cameratest.fuji.PropertyValues.SHOOTING_APERTURE;
-import static net.osdn.gokigen.cameratest.fuji.PropertyValues.SHOOTING_AUTO;
-import static net.osdn.gokigen.cameratest.fuji.PropertyValues.SHOOTING_CUSTOM;
-import static net.osdn.gokigen.cameratest.fuji.PropertyValues.SHOOTING_MANUAL;
-import static net.osdn.gokigen.cameratest.fuji.PropertyValues.SHOOTING_PROGRAM;
-import static net.osdn.gokigen.cameratest.fuji.PropertyValues.SHOOTING_SHUTTER;
-import static net.osdn.gokigen.cameratest.fuji.statuses.Properties.BATTERY_LEVEL;
-import static net.osdn.gokigen.cameratest.fuji.statuses.Properties.BATTERY_LEVEL_2;
-import static net.osdn.gokigen.cameratest.fuji.statuses.Properties.DEVICE_ERROR;
-import static net.osdn.gokigen.cameratest.fuji.statuses.Properties.FLASH;
-import static net.osdn.gokigen.cameratest.fuji.statuses.Properties.FOCUS_LOCK;
-import static net.osdn.gokigen.cameratest.fuji.statuses.Properties.FOCUS_POINT;
-import static net.osdn.gokigen.cameratest.fuji.statuses.Properties.MOVIE_REMAINING_TIME;
-import static net.osdn.gokigen.cameratest.fuji.statuses.Properties.SDCARD_REMAIN_SIZE;
-import static net.osdn.gokigen.cameratest.fuji.statuses.Properties.SELF_TIMER;
-import static net.osdn.gokigen.cameratest.fuji.statuses.Properties.SHOOTING_MODE;
+import java.util.Locale;
 
-class FujiStatusHolder implements IFujiStatus
+class FujiStatusHolder implements IFujiStatus, IFujiCameraProperties, IFujiCameraPropertyValues
 {
     private final String TAG = toString();
     private SparseIntArray statusHolder;
@@ -82,17 +66,17 @@ class FujiStatusHolder implements IFujiStatus
                 e.printStackTrace();
             }
         }
-        if ((status == 1) || (status == 6)) {
+        if ((status == BATTERY_CRITICAL) || (status == BATTERY_126S_CRITICAL)) {
             level = 0;
-        } else if (status == 7) {
+        } else if (status == BATTERY_126S_ONE_BAR) {
             level = 20;
-        } else if ((status == 2) || (status == 8)) {
+        } else if ((status == BATTERY_ONE_BAR) || (status == BATTERY_126S_TWO_BAR)) {
             level = 40;
-        } else if (status == 9) {
+        } else if (status == BATTERY_126S_THREE_BAR) {
             level = 60;
-        } else if ((status == 3) || (status == 10)) {
+        } else if ((status == BATTERY_TWO_BAR) || (status == BATTERY_126S_FOUR_BAR)) {
             level = 80;
-        } else if ((status == 4) || (status == 11)) {
+        } else if ((status == BATTERY_FULL) || (status == BATTERY_126S_FULL)) {
             level = 100;
         }
         return (level);
@@ -126,12 +110,33 @@ class FujiStatusHolder implements IFujiStatus
     @Override
     public int getSelfTimerMode()
     {
+        int value = -1;
         try {
-            return (statusHolder.get(SELF_TIMER));
+            int status = statusHolder.get(SELF_TIMER);
+            switch (status)
+            {
+                case TIMER_OFF:
+                    value = 0;
+                    break;
+                case TIMER_1SEC:
+                    value = 1;
+                    break;
+                case TIMER_2SEC:
+                    value = 2;
+                    break;
+                case TIMER_5SEC:
+                    value = 5;
+                    break;
+                case TIMER_10SEC:
+                    value = 10;
+                    break;
+                default:
+                    break;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return (-1);
+        return (value);
     }
 
 
@@ -207,4 +212,339 @@ class FujiStatusHolder implements IFujiStatus
         }
         return (new Point());
     }
+
+    @Override
+    public int getIsoSensitivity()
+    {
+        try {
+            int status = statusHolder.get(ISO);
+            return ((0x0000ffff & status));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (0);
+    }
+
+    @Override
+    public String getShutterSpeed()
+    {
+        try
+        {
+            int status = statusHolder.get(SHUTTER_SPEED);
+            if ((0x80000000 & status) != 0)
+            {
+                int value = 0x0fffffff & status;
+                return ("1/" + (value / 1000));
+            }
+            else
+            {
+                return (status + "");
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return ("--");
+    }
+
+    @Override
+    public String getExpRev()
+    {
+        try {
+            int status = statusHolder.get(EXPOSURE_COMPENSATION);
+            float value = ((float) status / 1000.0f);
+            return (String.format(Locale.ENGLISH, "%+1.1f", value));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ("");
+    }
+
+    @Override
+    public String getAperture()
+    {
+        try {
+            int status = statusHolder.get(APERTURE);
+            float value = ((float) status / 100.0f);
+            return (String.format(Locale.ENGLISH, "F%1.1f", value));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ("F--");
+    }
+
+    @Override
+    public String getWhiteBalance()
+    {
+        String value = "";
+        try {
+            int status = statusHolder.get(WHITE_BALANCE);
+            if (status == WHITE_BALANCE_AUTO)
+            {
+                value = "Auto";
+            }
+            else if (status == WHITE_BALANCE_FINE)
+            {
+                value = "Fine";
+            }
+            else if (status == WHITE_BALANCE_INCANDESCENT)
+            {
+                value = "Incandescent";
+            }
+            else if (status == WHITE_BALANCE_FLUORESCENT_1)
+            {
+                value = "Fluorescent 1";
+            }
+            else if (status == WHITE_BALANCE_FLUORESCENT_2)
+            {
+                value = "Fluorescent 2";
+            }
+            else if (status == WHITE_BALANCE_FLUORESCENT_3)
+            {
+                value = "Fluorescent 3";
+            }
+            else if (status == WHITE_BALANCE_SHADE)
+            {
+                value = "Shade";
+            }
+            else if (status == WHITE_BALANCE_UNDERWATER)
+            {
+                value = "Underwater";
+            }
+            else if (status == WHITE_BALANCE_TEMPERATURE)
+            {
+                value = "Kelvin";
+            }
+            else if (status == WHITE_BALANCE_CUSTOM)
+            {
+                value = "Custom";
+            }
+            else
+            {
+                value = "Unknown";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (value);
+    }
+
+
+    @Override
+    public int getF_SS_Control()
+    {
+        try {
+            return (statusHolder.get(F_SS_CONTROL));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (-1);
+    }
+
+    @Override
+    public String getFocusControlMode()
+    {
+        String value = "";
+        try {
+            int status = statusHolder.get(FOCUS_MODE);
+            if (status == FOCUS_MANUAL)
+            {
+                value = "M";
+            }
+            else if (status == FOCUS_SINGLE_AUTO)
+            {
+                value = "S";
+            }
+            else if (status == FOCUS_CONTINUOUS_AUTO)
+            {
+                value = "C";
+            }
+            else
+            {
+                value = "?";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (value);
+    }
+
+    @Override
+    public String getImageAspect()
+    {
+        String value = "";
+        try {
+            int status = statusHolder.get(IMAGE_ASPECT);
+            if (status == IMAGE_ASPECT_S_3x2)
+            {
+                value = "S:3x2";
+            }
+            else if (status == IMAGE_ASPECT_S_16x9)
+            {
+                value = "S:16x9";
+            }
+            else if (status == IMAGE_ASPECT_S_1x1)
+            {
+                value = "S:1x1";
+            }
+            else if (status == IMAGE_ASPECT_M_3x2)
+            {
+                value = "M:3x2";
+            }
+            else if (status == IMAGE_ASPECT_M_16x9)
+            {
+                value = "M:16x9";
+            }
+            else if (status == IMAGE_ASPECT_M_1x1)
+            {
+                value = "M:1x1";
+            }
+            else if (status == IMAGE_ASPECT_L_3x2)
+            {
+                value = "L:3x2";
+            }
+            else if (status == IMAGE_ASPECT_L_16x9)
+            {
+                value = "L:16x9";
+            }
+            else if (status == IMAGE_ASPECT_L_1x1)
+            {
+                value = "L:1x1";
+            }
+            else
+            {
+                value = "?";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (value);
+    }
+
+    @Override
+    public String getImageFormat()
+    {
+        String value = "";
+        try {
+            int status = statusHolder.get(IMAGE_FORMAT);
+            if (status == IMAGE_FORMAT_FINE)
+            {
+                value = "JPG[F]";
+            }
+            else if (status == IMAGE_FORMAT_NORMAL)
+            {
+                value = "JPG[N]";
+            }
+            else if (status == IMAGE_FORMAT_FINE_RAW)
+            {
+                value = "JPG[F]+RAW";
+            }
+            else if (status == IMAGE_FORMAT_NORMAL_RAW)
+            {
+                value = "JPG[N]+RAW";
+            }
+            else
+            {
+                value = "???";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (value);
+    }
+
+    @Override
+    public String getFilmSimulation()
+    {
+        String value = "";
+        try {
+            int status = statusHolder.get(FILM_SIMULATION);
+            switch (status)
+            {
+                case FILM_SIMULATION_PROVIA:
+                    value = "PROVIA";
+                    break;
+                case FILM_SIMULATION_VELVIA:
+                    value = "VELVIA";
+                    break;
+                case FILM_SIMULATION_ASTIA:
+                    value = "ASTIA";
+                    break;
+                case FILM_SIMULATION_MONOCHROME:
+                    value = "MONO";
+                    break;
+                case FILM_SIMULATION_SEPIA:
+                    value = "SEPIA";
+                    break;
+                case FILM_SIMULATION_PRO_NEG_HI:
+                    value = "NEG_HI";
+                    break;
+                case FILM_SIMULATION_PRO_NEG_STD:
+                    value = "NEG_STD";
+                    break;
+                case FILM_SIMULATION_MONOCHROME_Y_FILTER:
+                    value = "MONO_Y";
+                    break;
+                case FILM_SIMULATION_MONOCHROME_R_FILTER:
+                    value = "MONO_R";
+                    break;
+                case FILM_SIMULATION_MONOCHROME_G_FILTER:
+                    value = "MONO_G";
+                    break;
+                case FILM_SIMULATION_CLASSIC_CHROME:
+                    value = "CLASSIC CHROME";
+                    break;
+                case FILM_SIMULATION_ACROS:
+                    value = "ACROS";
+                    break;
+                case FILM_SIMULATION_ACROS_Y:
+                    value = "ACROS_Y";
+                    break;
+                case FILM_SIMULATION_ACROS_R:
+                    value = "ACROS_R";
+                    break;
+                case FILM_SIMULATION_ACROS_G:
+                    value = "ACROS_G";
+                    break;
+                case FILM_SIMULATION_ETERNA:
+                    value = "ETERNA";
+                    break;
+                default:
+                    value = "???";
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (value);
+    }
+
+    @Override
+    public boolean isRecModeEnable()
+    {
+        try {
+            int status = statusHolder.get(RECMODE_ENABLE);
+            if (status == 1)
+            {
+                return (true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (false);
+    }
+
+    @Override
+    public int getMovieIsoSensitivity()
+    {
+        try {
+            return (statusHolder.get(MOVIE_ISO));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (-1);
+    }
+
+
 }

@@ -1,0 +1,97 @@
+package net.osdn.gokigen.cameratest.fuji.statuses;
+
+public interface IFujiCameraPropertyValues
+{
+    int SHOOTING_MANUAL  = 1;
+    int SHOOTING_PROGRAM  = 2;
+    int SHOOTING_APERTURE  = 3;
+    int SHOOTING_SHUTTER  = 4;
+    int SHOOTING_CUSTOM  = 5;
+    int SHOOTING_AUTO  = 6;
+
+    int WHITE_BALANCE_AUTO  = 2;
+    int WHITE_BALANCE_FINE  = 4;
+    int WHITE_BALANCE_INCANDESCENT  = 6;
+    int WHITE_BALANCE_FLUORESCENT_1  = 0x8001;
+    int WHITE_BALANCE_FLUORESCENT_2  = 0x8002;
+    int WHITE_BALANCE_FLUORESCENT_3  = 0x8003;
+    int WHITE_BALANCE_SHADE  = 0x8006;
+    int WHITE_BALANCE_UNDERWATER  = 0x800a;
+    int WHITE_BALANCE_TEMPERATURE  = 0x800b;
+    int WHITE_BALANCE_CUSTOM  =0X800c;
+
+    int F_SS_CTRL_BOTH  = 0;
+    int F_SS_CTRL_F  = 1;
+    int F_SS_CTRL_SS  = 2;
+    int F_SS_CTRL_NONE  = 3;
+
+    int FOCUS_MANUAL  = 1;
+    int FOCUS_SINGLE_AUTO  = 0x8001;
+    int FOCUS_CONTINUOUS_AUTO  = 0x8002;
+
+    int IMAGE_ASPECT_S_3x2  = 2;
+    int IMAGE_ASPECT_S_16x9  = 3;
+    int IMAGE_ASPECT_S_1x1  = 4;
+    int IMAGE_ASPECT_M_3x2  = 6;
+    int IMAGE_ASPECT_M_16x9  = 7;
+    int IMAGE_ASPECT_M_1x1  = 8;
+    int IMAGE_ASPECT_L_3x2  = 10;
+    int IMAGE_ASPECT_L_16x9  = 11;
+    int IMAGE_ASPECT_L_1x1  = 12;
+
+    int IMAGE_FORMAT_FINE = 2;
+    int IMAGE_FORMAT_NORMAL = 3;
+    int IMAGE_FORMAT_FINE_RAW  = 4;
+    int IMAGE_FORMAT_NORMAL_RAW  = 5;
+
+    int FILM_SIMULATION_PROVIA  =1;
+    int FILM_SIMULATION_VELVIA  =2;
+    int FILM_SIMULATION_ASTIA  =3;
+    int FILM_SIMULATION_MONOCHROME  =4;
+    int FILM_SIMULATION_SEPIA  =5;
+    int FILM_SIMULATION_PRO_NEG_HI  =6;
+    int FILM_SIMULATION_PRO_NEG_STD  =7;
+    int FILM_SIMULATION_MONOCHROME_Y_FILTER  =8;
+    int FILM_SIMULATION_MONOCHROME_R_FILTER  =9;
+    int FILM_SIMULATION_MONOCHROME_G_FILTER  =10;
+    int FILM_SIMULATION_CLASSIC_CHROME  =11;
+    int FILM_SIMULATION_ACROS  =12;
+    int FILM_SIMULATION_ACROS_Y  =13;
+    int FILM_SIMULATION_ACROS_R  =14;
+    int FILM_SIMULATION_ACROS_G  =15;
+    int FILM_SIMULATION_ETERNA  =16;
+
+    int BATTERY_CRITICAL  =1;
+    int BATTERY_ONE_BAR  =2;
+    int BATTERY_TWO_BAR  =3;
+    int BATTERY_FULL  =4;
+    int BATTERY_126S_CRITICAL  =6;
+    int BATTERY_126S_ONE_BAR  =7;
+    int BATTERY_126S_TWO_BAR  =8;
+    int BATTERY_126S_THREE_BAR  =9;
+    int BATTERY_126S_FOUR_BAR  =10;
+    int BATTERY_126S_FULL  =11;
+
+    int TIMER_OFF  =0;
+    int TIMER_1SEC  =1;
+    int TIMER_2SEC  =2;
+    int TIMER_5SEC  =3;
+    int TIMER_10SEC  =4;
+
+    int FLASH_AUTO  =1;
+    int FLASH_OFF  =2;
+    int FLASH_FILL  =3;
+    int FLASH_REDEYE_AUTO  =4;
+    int FLASH_REDEYE_FILL  =5;
+    int FLASH_EXTERNAL_SYNC  =6;
+    int FLASH_ON  =0x8001;
+    int FLASH_REDEYE  =0x8002;
+    int FLASH_REDEYE_ON  =0x8003;
+    int FLASH_REDEYE_SYNC  =0x8004;
+    int FLASH_REDEYE_REAR  =0x8005;
+    int FLASH_SLOW_SYNC  =0x8006;
+    int FLASH_REAR_SYNC  =0x8007;
+    int FLASH_COMMANDER  =0x8008;
+    int FLASH_DISABLE  =0x8009;
+    int FLASH_ENABLE  =0x800a;
+}

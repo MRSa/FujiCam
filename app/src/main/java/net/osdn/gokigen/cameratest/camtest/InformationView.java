@@ -10,7 +10,6 @@ import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
-import net.osdn.gokigen.cameratest.fuji.statuses.Properties;
 import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatus;
 
 public class InformationView extends AppCompatImageView
@@ -22,7 +21,17 @@ public class InformationView extends AppCompatImageView
     private boolean focus_lock;
     private boolean isDeviceError;
     private int battery_level;
-    private int iso;
+    private int iso = 0;
+    private String shutter_speed = "";
+    private String aperture = "";
+    private String expRev = "";
+    private String whiteBalance = "";
+    private String focusControlMode = "";
+    private String imageAspect = "";
+    private String imageFormat = "";
+    private String filmSimulation = "";
+    private int f_ss_Control = -1;
+
 
     public InformationView(Context context) {
         super(context);
@@ -74,13 +83,15 @@ public class InformationView extends AppCompatImageView
             {
                 message = message + battery_level + "% ";
             }
+            message = message + " " + shutter_speed + " " + aperture + "  " + expRev + " : cnt:" + f_ss_Control;
             canvas.drawText(message, centerX, centerY - 50, framePaint);
             Log.v(TAG, message);
 
 
+            message = "WB: " + whiteBalance + " ";
             if (focusPoint != null)
             {
-                message = "FOCUS : [" + focusPoint.x + "," + focusPoint.y + "] ";
+                message = message + "FOCUS : [" + focusPoint.x + "," + focusPoint.y + "] ";
             }
             if (focus_lock)
             {
@@ -90,8 +101,15 @@ public class InformationView extends AppCompatImageView
             {
                 message = message + " ERROR";
             }
+            message = message + " [" + focusControlMode + "] ";
             canvas.drawText(message, centerX, centerY, framePaint);
             Log.v(TAG, message);
+
+
+            message = imageAspect + " " + imageFormat + " " + "[" + filmSimulation + "]" + " ";
+            canvas.drawText(message, centerX, centerY + 50, framePaint);
+            Log.v(TAG, message);
+
         }
         catch (Exception e)
         {
@@ -112,7 +130,16 @@ public class InformationView extends AppCompatImageView
         focus_lock = cameraStatus.isFocusLocked();
         battery_level = cameraStatus.getBatteryLevel();
         isDeviceError = cameraStatus.isDeviceError();
-        iso = cameraStatus.getValue(Properties.ISO);
+        iso = cameraStatus.getIsoSensitivity();
+        shutter_speed = cameraStatus.getShutterSpeed();
+        aperture = cameraStatus.getAperture();
+        expRev = cameraStatus.getExpRev();
+        whiteBalance = cameraStatus.getWhiteBalance();
+        f_ss_Control = cameraStatus.getF_SS_Control();
+        focusControlMode = cameraStatus.getFocusControlMode();
+        imageAspect = cameraStatus.getImageAspect();
+        imageFormat = cameraStatus.getImageFormat();
+        filmSimulation = cameraStatus.getFilmSimulation();
     }
 
 }

@@ -13,6 +13,19 @@ public interface IFujiStatus
     int getSelfTimerMode();
     int getRemainImageSpace();
     int getMovieImageSpace();
+    int getIsoSensitivity();
+    int getF_SS_Control();
     String getShootingMode();
     Point getFocusPoint();
+    String getShutterSpeed();
+    String getAperture();
+    String getExpRev();
+    String getWhiteBalance();
+    String getFocusControlMode();
+    String getImageAspect();
+    String getImageFormat();
+    String getFilmSimulation();
+    boolean isRecModeEnable();
+    int getMovieIsoSensitivity();
+
 }
