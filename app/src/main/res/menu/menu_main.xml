@@ -12,11 +12,7 @@
         android:orderInCategory="100"
         android:title="@string/action_wifi_settings"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+
     <item
         android:id="@+id/action_disconnect"
         android:orderInCategory="100"
@@ -24,6 +20,12 @@
         app:showAsAction="never" />
 
 <!--
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/action_reset"
         android:orderInCategory="100"
@@ -35,6 +37,7 @@
         android:orderInCategory="100"
         android:title="@string/action_up"
         app:showAsAction="never" />
+
     <item
         android:id="@+id/action_down_value"
         android:orderInCategory="100"

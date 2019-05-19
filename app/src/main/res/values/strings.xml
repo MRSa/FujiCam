@@ -18,4 +18,33 @@
     <string name="action_down">Down</string>
     <string name="action_reset">Reset Connection</string>
     <string name="action_disconnect">Disconnect</string>
+
+    <string name="pref_cat_application_control">App. Control</string>
+    <string name="pref_exit_power_off">Exit Application(and Camera OFF)</string>
+    <string name="pref_connection_method">Connection Method</string>
+    <string name="pref_cat_camera">Camera</string>
+    <string name="pref_capture_both_camera_and_live_view">Capture both camera and Live View</string>
+
+    <string name="pref_cat_others">Others</string>
+
+    <string name="pref_cat_gokigen">GOKIGEN</string>
+    <string name="pref_instruction_manual">Instructions</string>
+    <string name="pref_privacy_policy">Privacy Policy</string>
+
+    <string name="pref_degug_info">Debug Information</string>
+    <string name="pref_summary_debug_info">LogCat Information</string>
+
+
+    <string name="dialog_title_confirmation">Confirmation</string>
+    <string name="dialog_positive_execute">OK</string>
+    <string name="dialog_negative_cancel">Cancel</string>
+
+    <string name="dialog_confirm_title_output_log">Share debug log</string>
+    <string name="dialog_confirm_message_output_log">Share the debug log, OK?</string>
+
+    <string name="action_refresh">Refresh</string>
+    <string name="finish_refresh">Finished Refresh</string>
+
+    <string name="dialog_message_power_off">Power Off</string>
+
 </resources>

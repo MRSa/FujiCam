@@ -27,7 +27,7 @@ import net.osdn.gokigen.cameratest.pages.SectionsPagerAdapter;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements IApplicationControl
 {
     /////// OpenCV ///////  : license https://opencv.org/license/
     static
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), testTarget);
+        mSectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), testTarget, this);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = findViewById(R.id.container);
@@ -173,13 +173,12 @@ public class MainActivity extends AppCompatActivity
             testTarget.disconnect();
             return (true);
         }
+/*
         if (id == R.id.action_settings)
         {
             testTarget.settings();
             return (true);
         }
-
-/*
         if (id == R.id.action_reset)
         {
             testTarget.resetConnection();
@@ -250,7 +249,8 @@ public class MainActivity extends AppCompatActivity
     /**
      *
      */
-    private void exitApplication()
+    @Override
+    public void exitApplication()
     {
         try
         {

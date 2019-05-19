@@ -14,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import net.osdn.gokigen.cameratest.R;
 import net.osdn.gokigen.cameratest.fuji.Connection;
+import net.osdn.gokigen.cameratest.fuji.preference.FujiPreferenceFragment;
 import net.osdn.gokigen.cameratest.fuji.ILiveViewImage;
 import net.osdn.gokigen.cameratest.fuji.ReceivedDataHolder;
 import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatus;
@@ -27,6 +28,8 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
     private final Activity activity;
     private TextView textview;
     private Connection connection;
+
+    private FujiPreferenceFragment preferenceFragment = null;
     //private FileOutputStream outputStream = null;
     private static final int offsetSize = 18;  // 4byte: データサイズ、14byte: (謎の)ヘッダ
 
@@ -113,14 +116,25 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
         }
     }
 
+/*
     public void settings()
     {
         Log.v(TAG, "Show settings menu");
 
+        if (preferenceFragment == null)
+        {
+            preferenceFragment = FujiPreferenceFragment.newInstance();
+        }
+        FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment1, logCatFragment);
+        // backstackに追加
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+
         showMessageText("BBBB");
     }
 
-/*
     public void valueUp()
     {
         Log.v(TAG, "value UP");
