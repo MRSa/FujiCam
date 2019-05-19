@@ -71,9 +71,19 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
 
     public void disconnect()
     {
+        Log.v(TAG, "Disconnect");
+
+        showMessageText("DISCONNECT");
         try
         {
-            connection.disconnect();
+            Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.action_disconnect, Snackbar.LENGTH_SHORT).show();
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    connection.disconnect();
+                }
+            });
+            thread.start();
         }
         catch (Exception e)
         {
@@ -101,16 +111,16 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
         {
             e.printStackTrace();
         }
-
     }
-/*
+
     public void settings()
     {
-        Log.v(TAG, "settings menu");
+        Log.v(TAG, "Show settings menu");
 
         showMessageText("BBBB");
     }
 
+/*
     public void valueUp()
     {
         Log.v(TAG, "value UP");

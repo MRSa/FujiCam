@@ -12,8 +12,8 @@ import java.net.Socket;
 class Communication
 {
     private final String TAG = toString();
-    private static final int BUFFER_SIZE = 1024 * 1024 + 8;
 
+    private static final int BUFFER_SIZE = 1024 * 1024 + 8;
     private static final int CONTROL_PORT = 55740;
     private static final int ASYNC_RESPONSE_PORT = 55741;
     private static final int STREAM_PORT = 55742;
@@ -23,6 +23,8 @@ class Communication
     private DataOutputStream dos = null;
     private BufferedReader bufferedReader = null;
     private int sequenceNumber = 0x0000000a;
+
+    private boolean isDumpReceiveLog = true;
 
     private final FujiStreamReceiver stream;
     private final FujiAsyncResponseReceiver response;
@@ -47,7 +49,7 @@ class Communication
 
     void disconnect_socket()
     {
-        // ストリームを閉じる
+        // ストリームを全部閉じる
         try
         {
             dos.close();
@@ -57,6 +59,7 @@ class Communication
             e.printStackTrace();
         }
         dos = null;
+
         try
         {
             bufferedReader.close();
@@ -77,6 +80,7 @@ class Communication
             e.printStackTrace();
         }
         socket = null;
+        sequenceNumber = 0x0000000a;
         System.gc();
     }
 
@@ -102,15 +106,16 @@ class Communication
                 sendData[9]  = (byte) (((0x0000ff00 & sequenceNumber) >>> 8) & 0x000000ff);
                 sendData[10] = (byte) (((0x00ff0000 & sequenceNumber) >>> 16) & 0x000000ff);
                 sendData[11] = (byte) (((0xff000000 & sequenceNumber) >>> 24) & 0x000000ff);
-
-                Log.v(TAG, "SEQ No. : " + sequenceNumber);
+                if (isDumpReceiveLog)
+                {
+                    Log.v(TAG, "SEQ No. : " + sequenceNumber);
+                }
 
                 // シーケンス番号を増やす
                 sequenceNumber++;
             }
             // ログに送信メッセージを出力する
             dump_bytes("SEND[" + sendData.length + "] ", sendData);
-
 
             // (データを)送信
             dos.write(sendData);
@@ -131,7 +136,10 @@ class Communication
             if (is != null)
             {
                 int read_bytes = is.read(byte_array, 0, BUFFER_SIZE);
-                Log.v(TAG, "receive_from_camera() : " + read_bytes + " bytes.");
+                if (isDumpReceiveLog)
+                {
+                    Log.v(TAG, "receive_from_camera() : " + read_bytes + " bytes.");
+                }
                 return (new ReceivedDataHolder(byte_array, read_bytes));
             }
         }
@@ -142,8 +150,19 @@ class Communication
         return (new ReceivedDataHolder(new byte[0], 0));
     }
 
+    void dumpReceiveLog(boolean enable)
+    {
+        isDumpReceiveLog = enable;
+    }
+
     private void dump_bytes(String header, byte[] data)
     {
+        if (!isDumpReceiveLog)
+        {
+            // 受信ログを出さない
+            return;
+        }
+
         int index = 0;
         StringBuffer message;
         message = new StringBuffer();

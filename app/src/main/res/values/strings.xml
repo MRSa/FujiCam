@@ -17,4 +17,5 @@
     <string name="action_up">Up</string>
     <string name="action_down">Down</string>
     <string name="action_reset">Reset Connection</string>
+    <string name="action_disconnect">Disconnect</string>
 </resources>

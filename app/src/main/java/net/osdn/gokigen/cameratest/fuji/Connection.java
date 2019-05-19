@@ -157,8 +157,30 @@ public class Connection implements IFujiStatusRequest
     {
         try
         {
+            statusChecker.stop();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        try
+        {
             comm.stop_stream();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        try
+        {
             comm.stop_response();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        try
+        {
             comm.disconnect_socket();
         }
         catch (Exception e)

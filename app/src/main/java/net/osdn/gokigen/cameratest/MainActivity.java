@@ -168,6 +168,17 @@ public class MainActivity extends AppCompatActivity
             exitApplication();
             return (true);
         }
+        if (id == R.id.action_disconnect)
+        {
+            testTarget.disconnect();
+            return (true);
+        }
+        if (id == R.id.action_settings)
+        {
+            testTarget.settings();
+            return (true);
+        }
+
 /*
         if (id == R.id.action_reset)
         {
@@ -175,11 +186,6 @@ public class MainActivity extends AppCompatActivity
             return (true);
         }
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
-        {
-            testTarget.settings();
-            return (true);
-        }
         if (id == R.id.action_up_value)
         {
             testTarget.valueUp();
