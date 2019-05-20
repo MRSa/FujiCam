@@ -25,12 +25,12 @@ class MessageSequence
                 (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
 
 /**/
-                // device_name 'GOKIGEN____012345'
+                // device_name 'GOKIGEN____012345678'
                 (byte)0x47, (byte)0x00, (byte)0x4f, (byte)0x00, (byte)0x4b, (byte)0x00, (byte)0x49, (byte)0x00,
                 (byte)0x47, (byte)0x00, (byte)0x45, (byte)0x00, (byte)0x4e, (byte)0x00, (byte)0x5f, (byte)0x00,
                 (byte)0x5f, (byte)0x00, (byte)0x5f, (byte)0x00, (byte)0x5f, (byte)0x00, (byte)0x30, (byte)0x00,
                 (byte)0x31, (byte)0x00, (byte)0x32, (byte)0x00, (byte)0x33, (byte)0x00, (byte)0x34, (byte)0x00,
-                (byte)0x35, (byte)0x00, (byte)0x36, (byte)0x00, (byte)0x37, (byte)0x00, (byte)0x00, (byte)0x00,
+                (byte)0x35, (byte)0x00, (byte)0x36, (byte)0x00, (byte)0x37, (byte)0x00, (byte)0x38, (byte)0x00,
                 (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
                 (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
 /**/
@@ -54,14 +54,6 @@ class MessageSequence
     byte[] reset_message()
     {
         return (new byte[] { (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff, });
-    }
-
-    byte[] hello_message()
-    {
-        return (new byte[] {
-                // HELLO (0x0000)
-                0x00, 0x00,
-        });
     }
 
     byte[] start_message()
@@ -134,7 +126,6 @@ class MessageSequence
 
         });
     }
-
 
     byte[] start_message4()
     {
@@ -324,7 +315,6 @@ class MessageSequence
 
         });
     }
-
 
     byte[] execute_focus_unlock()
     {

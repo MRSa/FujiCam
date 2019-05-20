@@ -51,22 +51,33 @@ public class Connection implements IFujiStatusRequest
             dump_bytes(0, rx_bytes);
             Thread.sleep(50);
 
-            // 応答エラーの場合は この値が返ってくるはず  = {0x05, 0x00, 0x00, 0x00, 0x19, 0x20, 0x00, 0x00};
+            // 応答エラーかどうかをチェックする
+            if (rx_bytes.getData().length == 8)
+            {
+                byte[] receiveData = rx_bytes.getData();
+                if ((receiveData[0] == 0x05)&&(receiveData[1] == 0x00)&&(receiveData[2] == 0x00)&&(receiveData[3] == 0x00)&&
+                    (receiveData[4] == 0x19)&&(receiveData[5] == 0x20)&&(receiveData[6] == 0x00)&&(receiveData[7] == 0x00))
+                {
+                    // 応答エラー...
+                    return (false);
+                }
+                return (false);
+            }
 
             // start_messageを送信
-            comm.send_to_camera(sequence.start_message(), false);
+            comm.send_to_camera(sequence.start_message(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(1, rx_bytes);
             Thread.sleep(50);
 
             //  なんだろう？？ (送信が必要なようだが）
-            comm.send_to_camera(sequence.start_message2(), false);
+            comm.send_to_camera(sequence.start_message2(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(2, rx_bytes);
             Thread.sleep(50);
 
             // two_part messageを発行 (その１)
-            comm.send_to_camera(sequence.start_message3_1(), false);
+            comm.send_to_camera(sequence.start_message3_1(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(3, rx_bytes);
             Thread.sleep(50);
@@ -78,13 +89,13 @@ public class Connection implements IFujiStatusRequest
             Thread.sleep(50);
 
             // remote mode
-            comm.send_to_camera(sequence.start_message4(), false);
+            comm.send_to_camera(sequence.start_message4(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(5, rx_bytes);
             Thread.sleep(50);
 
             // two_part messageを発行 (その１)
-            comm.send_to_camera(sequence.start_message5_1(), false);
+            comm.send_to_camera(sequence.start_message5_1(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(6, rx_bytes);
             Thread.sleep(50);
@@ -96,25 +107,25 @@ public class Connection implements IFujiStatusRequest
             Thread.sleep(50);
 
             // ????
-            comm.send_to_camera(sequence.start_message6(), false);
+            comm.send_to_camera(sequence.start_message6(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(8, rx_bytes);
             Thread.sleep(50);
 
             // ????
-            comm.send_to_camera(sequence.start_message7(), false);
+            comm.send_to_camera(sequence.start_message7(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(9, rx_bytes);
             Thread.sleep(50);
 
             // ????
-            comm.send_to_camera(sequence.start_message8(), false);
+            comm.send_to_camera(sequence.start_message8(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(10, rx_bytes);
             Thread.sleep(50);
 
             // ????
-            comm.send_to_camera(sequence.start_message9(), false);
+            comm.send_to_camera(sequence.start_message9(), true);
 
             // 応答OKの場合は、8バイト ({0x03, 0x00, 0x01, 0x20} + {0x10, 0x02, 0x00, 0x00} )が応答されるはず
             rx_bytes = comm.receive_from_camera();

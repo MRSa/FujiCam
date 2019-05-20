@@ -12,6 +12,7 @@ import java.net.Socket;
 class Communication
 {
     private final String TAG = toString();
+    private static final int SEQUENCE_START_NUMBER = 1;
 
     private static final int BUFFER_SIZE = 1024 * 1024 + 8;
     private static final int CONTROL_PORT = 55740;
@@ -22,7 +23,7 @@ class Communication
     private Socket socket = null;
     private DataOutputStream dos = null;
     private BufferedReader bufferedReader = null;
-    private int sequenceNumber = 0x0000000a;
+    private int sequenceNumber = SEQUENCE_START_NUMBER;
 
     private boolean isDumpReceiveLog = true;
 
@@ -80,7 +81,7 @@ class Communication
             e.printStackTrace();
         }
         socket = null;
-        sequenceNumber = 0x0000000a;
+        sequenceNumber = SEQUENCE_START_NUMBER;
         System.gc();
     }
 

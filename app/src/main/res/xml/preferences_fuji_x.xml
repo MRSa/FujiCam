@@ -29,7 +29,14 @@
 
     <PreferenceCategory
         android:title="@string/pref_cat_others">
-
+        <Preference
+            android:key="special_thanks"
+            android:title="@string/pref_special_thanks"
+            android:summary="https://github.com/hkr/fuji-cam-wifi-tool"
+            android:selectable="true">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://github.com/hkr/fuji-cam-wifi-tool" />
+        </Preference>
 
     </PreferenceCategory>
 
@@ -39,10 +46,10 @@
         <Preference
             android:key="instruction_link"
             android:title="@string/pref_instruction_manual"
-            android:summary="https://osdn.net/projects/gokigen/wiki/GR2Control"
+            android:summary="https://osdn.net/projects/gokigen/wiki/A01d"
             android:selectable="true">
             <intent android:action="android.intent.action.VIEW"
-                android:data="https://osdn.net/projects/gokigen/wiki/GR2Control" />
+                android:data="https://osdn.net/projects/gokigen/wiki/A01d" />
         </Preference>
 
         <Preference
