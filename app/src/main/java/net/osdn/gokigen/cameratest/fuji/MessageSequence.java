@@ -236,7 +236,7 @@ class MessageSequence
 
 
 
-    byte[] start_message9()
+    byte[] camera_remote_message()
     {
         return (new byte[] {
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)

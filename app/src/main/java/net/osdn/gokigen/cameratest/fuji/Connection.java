@@ -70,12 +70,14 @@ public class Connection implements IFujiStatusRequest
             dump_bytes(1, rx_bytes);
             Thread.sleep(50);
 
+/**/
             //  なんだろう？？ (送信が必要なようだが）
             comm.send_to_camera(sequence.start_message2(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(2, rx_bytes);
             Thread.sleep(50);
-
+/**/
+/**/
             // two_part messageを発行 (その１)
             comm.send_to_camera(sequence.start_message3_1(), true);
             rx_bytes = comm.receive_from_camera();
@@ -87,13 +89,16 @@ public class Connection implements IFujiStatusRequest
             rx_bytes = comm.receive_from_camera();
             dump_bytes(4, rx_bytes);
             Thread.sleep(50);
+/**/
 
+/**/
             // remote mode
             comm.send_to_camera(sequence.start_message4(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(5, rx_bytes);
             Thread.sleep(50);
-
+/**/
+/**/
             // two_part messageを発行 (その１)
             comm.send_to_camera(sequence.start_message5_1(), true);
             rx_bytes = comm.receive_from_camera();
@@ -105,7 +110,8 @@ public class Connection implements IFujiStatusRequest
             rx_bytes = comm.receive_from_camera();
             dump_bytes(7, rx_bytes);
             Thread.sleep(50);
-
+/**/
+/**/
             // ????
             comm.send_to_camera(sequence.start_message6(), true);
             rx_bytes = comm.receive_from_camera();
@@ -117,15 +123,16 @@ public class Connection implements IFujiStatusRequest
             rx_bytes = comm.receive_from_camera();
             dump_bytes(9, rx_bytes);
             Thread.sleep(50);
-
+/**/
+/**/
             // ????
             comm.send_to_camera(sequence.start_message8(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(10, rx_bytes);
             Thread.sleep(50);
-
-            // ????
-            comm.send_to_camera(sequence.start_message9(), true);
+/**/
+            // リモート制御の開始！
+            comm.send_to_camera(sequence.camera_remote_message(), true);
 
             // 応答OKの場合は、8バイト ({0x03, 0x00, 0x01, 0x20} + {0x10, 0x02, 0x00, 0x00} )が応答されるはず
             rx_bytes = comm.receive_from_camera();
