@@ -80,6 +80,12 @@ public class FujiStatusChecker implements IFujiStatusReceiver
         boolean isStatusUpdated = false;
         try
         {
+            if (data.length < 14)
+            {
+                Log.v(TAG, "received status length is short. (" + data.length + " bytes.)");
+                return;
+            }
+
             int nofStatus = (data[13] * 256) + data[12];
             //Log.v(TAG, "status Received. " + data.length + " bytes. [status : " + nofStatus + "]");
 

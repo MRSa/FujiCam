@@ -1,6 +1,7 @@
 package net.osdn.gokigen.cameratest.camtest;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
@@ -17,10 +18,12 @@ import net.osdn.gokigen.cameratest.fuji.Connection;
 import net.osdn.gokigen.cameratest.fuji.preference.FujiPreferenceFragment;
 import net.osdn.gokigen.cameratest.fuji.ILiveViewImage;
 import net.osdn.gokigen.cameratest.fuji.ReceivedDataHolder;
+import net.osdn.gokigen.cameratest.fuji.preference.IPreferencePropertyAccessor;
 import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatus;
 import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatusNotify;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 
 public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiveViewImage, IFujiStatusNotify
 {
@@ -53,14 +56,17 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
             //prepareFile();
             Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.connect, Snackbar.LENGTH_SHORT).show();
 
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+            final boolean isBothLiveView = preferences.getBoolean(IPreferencePropertyAccessor.FUJIX_DISPLAY_CAMERA_VIEW, false);
+
             showMessageText("START CONNECT");
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    boolean ret = connection.start_connect();
+                    boolean ret = connection.start_connect(isBothLiveView);
                     if (!ret)
                     {
-                        showMessageText("CONNECT FAILURE...");
+                        showMessageText("CONNECT FAILURE... : " + isBothLiveView);
                     }
                 }
             });

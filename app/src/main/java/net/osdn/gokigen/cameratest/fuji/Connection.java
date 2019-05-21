@@ -23,11 +23,11 @@ public class Connection implements IFujiStatusRequest
         this.statusChecker = new FujiStatusChecker(this, notify);
     }
 
-    public boolean start_connect()
+    public boolean start_connect(boolean isBothLiveView)
     {
         boolean ret = false;
 
-        if (connect_to_camera())
+        if (connect_to_camera(isBothLiveView))
         {
             ret = requestStatus();
             if (ret)
@@ -39,7 +39,7 @@ public class Connection implements IFujiStatusRequest
         return (ret);
     }
 
-    private boolean connect_to_camera()
+    private boolean connect_to_camera(boolean isBothLiveView)
     {
         try
         {
@@ -70,67 +70,66 @@ public class Connection implements IFujiStatusRequest
             dump_bytes(1, rx_bytes);
             Thread.sleep(50);
 
-/**/
             //  なんだろう？？ (送信が必要なようだが）
             comm.send_to_camera(sequence.start_message2(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(2, rx_bytes);
             Thread.sleep(50);
-/**/
-/**/
+
             // two_part messageを発行 (その１)
             comm.send_to_camera(sequence.start_message3_1(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(3, rx_bytes);
             Thread.sleep(50);
 
-            // two_part messageを発行 (その２)
-            comm.send_to_camera(sequence.start_message3_2(), false);
-            rx_bytes = comm.receive_from_camera();
-            dump_bytes(4, rx_bytes);
-            Thread.sleep(50);
-/**/
+            if (rx_bytes.getData().length <= 50)
+            {
+                // two_part messageを発行 (その２)
+                comm.send_to_camera(sequence.start_message3_2(), false);
+                rx_bytes = comm.receive_from_camera();
+                dump_bytes(4, rx_bytes);
+                Thread.sleep(50);
+            }
 
-/**/
             // remote mode
             comm.send_to_camera(sequence.start_message4(), true);
             rx_bytes = comm.receive_from_camera();
             dump_bytes(5, rx_bytes);
             Thread.sleep(50);
-/**/
-/**/
-            // two_part messageを発行 (その１)
-            comm.send_to_camera(sequence.start_message5_1(), true);
-            rx_bytes = comm.receive_from_camera();
-            dump_bytes(6, rx_bytes);
-            Thread.sleep(50);
 
-            // two_part messageを発行 (その２)
-            comm.send_to_camera(sequence.start_message5_2(), false);
-            rx_bytes = comm.receive_from_camera();
-            dump_bytes(7, rx_bytes);
-            Thread.sleep(50);
-/**/
-/**/
-            // ????
-            comm.send_to_camera(sequence.start_message6(), true);
-            rx_bytes = comm.receive_from_camera();
-            dump_bytes(8, rx_bytes);
-            Thread.sleep(50);
+            if (!isBothLiveView)
+            {
+                // two_part messageを発行 (その１)
+                comm.send_to_camera(sequence.start_message5_1(), true);
+                rx_bytes = comm.receive_from_camera();
+                dump_bytes(6, rx_bytes);
+                Thread.sleep(50);
 
-            // ????
-            comm.send_to_camera(sequence.start_message7(), true);
-            rx_bytes = comm.receive_from_camera();
-            dump_bytes(9, rx_bytes);
-            Thread.sleep(50);
-/**/
-/**/
-            // ????
-            comm.send_to_camera(sequence.start_message8(), true);
-            rx_bytes = comm.receive_from_camera();
-            dump_bytes(10, rx_bytes);
-            Thread.sleep(50);
-/**/
+                // two_part messageを発行 (その２)
+                comm.send_to_camera(sequence.start_message5_2(), false);
+                rx_bytes = comm.receive_from_camera();
+                dump_bytes(7, rx_bytes);
+                Thread.sleep(50);
+
+                // ????
+                comm.send_to_camera(sequence.start_message6(), true);
+                rx_bytes = comm.receive_from_camera();
+                dump_bytes(8, rx_bytes);
+                Thread.sleep(50);
+
+                // ????
+                comm.send_to_camera(sequence.start_message7(), true);
+                rx_bytes = comm.receive_from_camera();
+                dump_bytes(9, rx_bytes);
+                Thread.sleep(50);
+
+                // ????
+                comm.send_to_camera(sequence.start_message8(), true);
+                rx_bytes = comm.receive_from_camera();
+                dump_bytes(10, rx_bytes);
+                Thread.sleep(50);
+            }
+
             // リモート制御の開始！
             comm.send_to_camera(sequence.camera_remote_message(), true);
 

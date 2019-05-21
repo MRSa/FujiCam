@@ -19,6 +19,10 @@
 
     <PreferenceCategory
         android:title="@string/pref_cat_camera">
+        <CheckBoxPreference
+            android:key="fujix_display_camera_view"
+            android:title="@string/pref_fujix_display_camera_view"
+            android:summary="@string/pref_fujix_display_camera_view_summary"/>
 
         <CheckBoxPreference
             android:key="capture_both_camera_and_live_view"

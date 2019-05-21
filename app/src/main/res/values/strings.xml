@@ -34,6 +34,9 @@
     <string name="pref_degug_info">Debug Information</string>
     <string name="pref_summary_debug_info">LogCat Information</string>
 
+    <string name="pref_fujix_display_camera_view">Use Camera Display</string>
+    <string name="pref_fujix_display_camera_view_summary">Shows liveview screen both camera and smartphone.</string>
+
     <string name="pref_special_thanks">Special Thanks to : fuji-cam-wifi-tool</string>
 
 
