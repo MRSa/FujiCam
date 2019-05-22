@@ -303,4 +303,34 @@ public class Connection implements IFujiStatusRequest
         }
         return (false);
     }
+
+    public boolean updateProperty(int commandCode, int setValue)
+    {
+        ReceivedDataHolder rx_bytes;
+        try {
+            byte high = (byte) ((0x0000ff00 & commandCode) >> 8);
+            byte low = (byte) (0x000000ff & commandCode);
+
+            byte data0 = (byte)((0xff000000 & setValue) >> 24);
+            byte data1 = (byte)((0x00ff0000 & setValue) >> 16);
+            byte data2 = (byte)((0x0000ff00 & setValue) >> 8);
+            byte data3 = (byte)((0x000000ff & setValue));
+
+            // two_part messageを発行 (その１)
+            comm.send_to_camera(sequence.update_property_1(high, low), true);
+            rx_bytes = comm.receive_from_camera();
+            dump_bytes(15, rx_bytes);
+            Thread.sleep(50);
+
+            // two_part messageを発行 (その２)
+            comm.send_to_camera(sequence.update_property_2(data0, data1, data2, data3), false);
+            rx_bytes = comm.receive_from_camera();
+            dump_bytes(16, rx_bytes);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return (false);
+    }
 }

@@ -393,13 +393,13 @@ class MessageSequence
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : two_part (0x1016)  : SetDevicePropValue
+                // message_header.type : two_part (0x1016)
                 (byte)0x16, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる)
                 (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
 
-                // data ...
+                // command code
                low, high,
         });
     }
@@ -410,13 +410,13 @@ class MessageSequence
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x02, (byte)0x00,
 
-                // message_header.type : two_part (0x1016)  : SetDevicePropValue
+                // message_header.type : two_part (0x1016)
                 (byte)0x16, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる...けど two-part messageなので同じ)
                 (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
 
-                // data ...
+                // data...
                 data3, data2, data1, data0,
         });
     }
