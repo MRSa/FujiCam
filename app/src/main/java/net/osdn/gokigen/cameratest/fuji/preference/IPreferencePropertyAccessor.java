@@ -10,6 +10,7 @@ public interface IPreferencePropertyAccessor
     String CAPTURE_BOTH_CAMERA_AND_LIVE_VIEW = "capture_both_camera_and_live_view";
 
     String FUJIX_DISPLAY_CAMERA_VIEW = "fujix_display_camera_view";
-
+    String FUJIX_FOCUS_XY = "fujix_focus_xy";
+    String FUJIX_FOCUS_XY_DEFAULT_VALUE = "7,7";
 
 }

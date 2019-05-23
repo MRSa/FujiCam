@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.CheckBoxPreference;
+import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -16,6 +17,7 @@ import androidx.preference.PreferenceManager;
 import net.osdn.gokigen.cameratest.IApplicationControl;
 import net.osdn.gokigen.cameratest.R;
 
+import java.net.Inet4Address;
 import java.util.Map;
 
 public class FujiPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener
@@ -75,20 +77,45 @@ public class FujiPreferenceFragment extends PreferenceFragmentCompat implements 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey)
     {
-        setPreferencesFromResource(R.xml.preferences_fuji_x, rootKey);
+        try
+        {
+            setPreferencesFromResource(R.xml.preferences_fuji_x, rootKey);
 
-        ListPreference connectionMethod = (ListPreference) findPreference(IPreferencePropertyAccessor.CONNECTION_METHOD);
-        connectionMethod.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                preference.setSummary(newValue + " ");
-                return (true);
+            ListPreference connectionMethod = (ListPreference) findPreference(IPreferencePropertyAccessor.CONNECTION_METHOD);
+            connectionMethod.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    preference.setSummary(newValue + " ");
+                    return (true);
+                }
+            });
+            connectionMethod.setSummary(connectionMethod.getValue() + " ");
+
+            findPreference("exit_application").setOnPreferenceClickListener(powerOffController);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        try
+        {
+            EditTextPreference focusResolition = (EditTextPreference) findPreference(IPreferencePropertyAccessor.FUJIX_FOCUS_XY);
+            String[] focus = focusResolition.getText().split(",");
+            if (focus.length != 2)
+            {
+                focusResolition.setText(IPreferencePropertyAccessor.FUJIX_FOCUS_XY_DEFAULT_VALUE);
             }
-        });
-        connectionMethod.setSummary(connectionMethod.getValue() + " ");
-
-        findPreference("exit_application").setOnPreferenceClickListener(powerOffController);
-
+            else
+            {
+                int x = Integer.parseInt(focus[0]);
+                int y = Integer.parseInt(focus[1]);
+                focusResolition.setText(x + "," + y);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -110,6 +137,9 @@ public class FujiPreferenceFragment extends PreferenceFragmentCompat implements 
             }
             if (!items.containsKey(IPreferencePropertyAccessor.FUJIX_DISPLAY_CAMERA_VIEW)) {
                 editor.putBoolean(IPreferencePropertyAccessor.FUJIX_DISPLAY_CAMERA_VIEW, false);
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.FUJIX_FOCUS_XY)) {
+                editor.putString(IPreferencePropertyAccessor.FUJIX_FOCUS_XY, IPreferencePropertyAccessor.FUJIX_FOCUS_XY_DEFAULT_VALUE);
             }
             editor.apply();
         }

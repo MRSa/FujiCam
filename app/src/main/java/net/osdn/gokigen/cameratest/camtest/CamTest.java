@@ -23,6 +23,7 @@ import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatus;
 import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatusNotify;
 
 import androidx.annotation.NonNull;
+import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceManager;
 
 public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiveViewImage, IFujiStatusNotify
@@ -58,6 +59,25 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
 
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
             final boolean isBothLiveView = preferences.getBoolean(IPreferencePropertyAccessor.FUJIX_DISPLAY_CAMERA_VIEW, false);
+
+            // フォーカス解像度を変えたい
+            String focusPoint = preferences.getString(IPreferencePropertyAccessor.FUJIX_FOCUS_XY, IPreferencePropertyAccessor.FUJIX_FOCUS_XY_DEFAULT_VALUE);
+            try
+            {
+                String[] focus = focusPoint.split(",");
+                if (focus.length == 2)
+                {
+                    maxPointLimitWidth = Integer.parseInt(focus[0]);
+                    maxPointLimitHeight = Integer.parseInt(focus[1]);
+                }
+                Log.v(TAG, "FOCUS RESOLUTION : " + maxPointLimitWidth + "," + maxPointLimitHeight);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                maxPointLimitWidth = 7.0f;
+                maxPointLimitHeight = 7.0f;
+            }
 
             showMessageText("START CONNECT");
             Thread thread = new Thread(new Runnable() {
