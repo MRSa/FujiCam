@@ -1,5 +1,6 @@
 package net.osdn.gokigen.cameratest.fuji;
 
+import android.app.Activity;
 import android.graphics.PointF;
 import android.util.Log;
 
@@ -16,9 +17,9 @@ public class Connection implements IFujiStatusRequest
     private final Communication comm;
     private final FujiStatusChecker statusChecker;
 
-    public Connection(@NonNull ILiveViewImage imageViewer, @NonNull IFujiStatusNotify notify)
+    public Connection(@NonNull Activity activity, @NonNull ILiveViewImage imageViewer, @NonNull IFujiStatusNotify notify)
     {
-        this.comm = new Communication(imageViewer);
+        this.comm = new Communication(activity, imageViewer);
         this.sequence = new MessageSequence();
         this.statusChecker = new FujiStatusChecker(this, notify);
     }

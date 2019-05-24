@@ -30,6 +30,12 @@
             android:defaultValue="7,7"
             android:summary="@string/pref_summary_fujix_focus_xy" />
 
+        <EditTextPreference
+            android:key="fujix_liveview_wait"
+            android:title="@string/pref_fujix_liveview_wait"
+            android:defaultValue="80"
+            android:summary="@string/pref_summary_fujix_liveview_wait" />
+
         <CheckBoxPreference
             android:key="capture_both_camera_and_live_view"
             android:title="@string/pref_capture_both_camera_and_live_view" />

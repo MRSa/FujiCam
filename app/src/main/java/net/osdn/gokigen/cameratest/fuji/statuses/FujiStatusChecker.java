@@ -12,6 +12,7 @@ public class FujiStatusChecker implements IFujiStatusReceiver
     private final IFujiStatusRequest comm;
     private final IFujiStatusNotify notify;
     private final FujiStatusHolder statusHolder;
+    private static final int  ERROR_LIMIT = 10;
     private boolean threadIsRunning = false;
     private final int WAIT_MS = 400;
 
@@ -35,22 +36,28 @@ public class FujiStatusChecker implements IFujiStatusReceiver
             @Override
             public void run()
             {
-                try
+
+                int errorCount = 0;
+                threadIsRunning = true;
+                while (threadIsRunning)
                 {
-                    threadIsRunning = true;
-                    while (threadIsRunning)
+                    try
                     {
                         comm.requestStatus();
                         Thread.sleep(WAIT_MS);
+                        errorCount = 0;
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                        errorCount++;
+                    }
+                    if (errorCount > ERROR_LIMIT)
+                    {
+                        threadIsRunning = false;
                     }
                 }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                threadIsRunning = false;
                 Log.v(TAG, "--- FINISH STATUS WATCH ---");
-
             }
         });
         try

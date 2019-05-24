@@ -23,7 +23,6 @@ import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatus;
 import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatusNotify;
 
 import androidx.annotation.NonNull;
-import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceManager;
 
 public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiveViewImage, IFujiStatusNotify
@@ -46,7 +45,7 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
     public CamTest(@NonNull Activity activity)
     {
         this.activity = activity;
-        this.connection = new Connection(this, this);
+        this.connection = new Connection(activity, this, this);
     }
 
     public void connect()

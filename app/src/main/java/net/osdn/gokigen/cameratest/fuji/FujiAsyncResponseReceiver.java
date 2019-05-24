@@ -12,6 +12,7 @@ class FujiAsyncResponseReceiver
     private final int portNumber;
     private static final int BUFFER_SIZE = 1280 + 8;
     private static final int WAIT_MS = 250;   // 250ms
+    private static final int ERROR_LIMIT = 30;
     private boolean isStart = false;
 
     FujiAsyncResponseReceiver(String ip, int portNumber)
@@ -22,6 +23,11 @@ class FujiAsyncResponseReceiver
 
     void start()
     {
+        if (isStart)
+        {
+            // すでに受信スレッド動作中なので抜ける
+            return;
+        }
         isStart = true;
         Thread thread = new Thread(new Runnable()
         {
@@ -57,6 +63,7 @@ class FujiAsyncResponseReceiver
 
     private void startReceive(Socket socket)
     {
+        int errorCount = 0;
         InputStreamReader isr;
         char[] char_array;
         try
@@ -81,10 +88,17 @@ class FujiAsyncResponseReceiver
                 //return (new ReceivedDataHolder(char_array, read_bytes));
 
                 Thread.sleep(WAIT_MS);
+                errorCount = 0;
             }
             catch (Exception e)
             {
                 e.printStackTrace();
+                errorCount++;
+            }
+            if (errorCount > ERROR_LIMIT)
+            {
+                // エラーが連続でたくさん出たらループをストップさせる
+                isStart = false;
             }
         }
         try

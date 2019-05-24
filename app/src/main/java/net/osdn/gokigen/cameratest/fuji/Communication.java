@@ -1,5 +1,6 @@
 package net.osdn.gokigen.cameratest.fuji;
 
+import android.app.Activity;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -30,9 +31,9 @@ class Communication
     private final FujiStreamReceiver stream;
     private final FujiAsyncResponseReceiver response;
 
-    Communication(@NonNull ILiveViewImage imageViewer)
+    Communication(@NonNull Activity activity, @NonNull ILiveViewImage imageViewer)
     {
-        this.stream = new FujiStreamReceiver(CAMERA_IP, STREAM_PORT, imageViewer);
+        this.stream = new FujiStreamReceiver(activity, CAMERA_IP, STREAM_PORT, imageViewer);
         this.response = new FujiAsyncResponseReceiver(CAMERA_IP, ASYNC_RESPONSE_PORT);
     }
 

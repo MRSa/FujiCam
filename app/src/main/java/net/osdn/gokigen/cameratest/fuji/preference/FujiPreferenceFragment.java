@@ -17,7 +17,6 @@ import androidx.preference.PreferenceManager;
 import net.osdn.gokigen.cameratest.IApplicationControl;
 import net.osdn.gokigen.cameratest.R;
 
-import java.net.Inet4Address;
 import java.util.Map;
 
 public class FujiPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener
@@ -116,6 +115,17 @@ public class FujiPreferenceFragment extends PreferenceFragmentCompat implements 
         {
             e.printStackTrace();
         }
+        try
+        {
+            EditTextPreference lvWait = (EditTextPreference) findPreference(IPreferencePropertyAccessor.FUJIX_LIVEVIEW_WAIT);
+            String wait = lvWait.getText();
+            int waitMs = Integer.parseInt(wait);
+            lvWait.setText("" + waitMs);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -140,6 +150,9 @@ public class FujiPreferenceFragment extends PreferenceFragmentCompat implements 
             }
             if (!items.containsKey(IPreferencePropertyAccessor.FUJIX_FOCUS_XY)) {
                 editor.putString(IPreferencePropertyAccessor.FUJIX_FOCUS_XY, IPreferencePropertyAccessor.FUJIX_FOCUS_XY_DEFAULT_VALUE);
+            }
+            if (!items.containsKey(IPreferencePropertyAccessor.FUJIX_LIVEVIEW_WAIT)) {
+                editor.putString(IPreferencePropertyAccessor.FUJIX_LIVEVIEW_WAIT, IPreferencePropertyAccessor.FUJIX_LIVEVIEW_WAIT_DEFAULT_VALUE);
             }
             editor.apply();
         }
