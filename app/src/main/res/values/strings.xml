@@ -9,6 +9,8 @@
     <string name="shutter">Execute Shutter</string>
     <string name="drive_af">Drive AF</string>
     <string name="unlock_focus">Focus Unlock</string>
+    <string name="change_film_simulation">Change Film Simulation</string>
+    <string name="change_image_aspect">Change Image Aspect</string>
     <string name="label_button1">1</string>
     <string name="label_button2">2</string>
     <string name="label_button3">3</string>

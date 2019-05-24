@@ -29,6 +29,7 @@ public interface IFujiCameraPropertyValues
     int FOCUS_SINGLE_AUTO  = 0x8001;
     int FOCUS_CONTINUOUS_AUTO  = 0x8002;
 
+    int IMAGE_ASPECT_MIN  = 2;
     int IMAGE_ASPECT_S_3x2  = 2;
     int IMAGE_ASPECT_S_16x9  = 3;
     int IMAGE_ASPECT_S_1x1  = 4;
@@ -38,12 +39,15 @@ public interface IFujiCameraPropertyValues
     int IMAGE_ASPECT_L_3x2  = 10;
     int IMAGE_ASPECT_L_16x9  = 11;
     int IMAGE_ASPECT_L_1x1  = 12;
+    int IMAGE_ASPECT_MAX  = 12;
+
 
     int IMAGE_FORMAT_FINE = 2;
     int IMAGE_FORMAT_NORMAL = 3;
     int IMAGE_FORMAT_FINE_RAW  = 4;
     int IMAGE_FORMAT_NORMAL_RAW  = 5;
 
+    int FILM_SIMULATION_MIN = 1;
     int FILM_SIMULATION_PROVIA  =1;
     int FILM_SIMULATION_VELVIA  =2;
     int FILM_SIMULATION_ASTIA  =3;
@@ -60,6 +64,7 @@ public interface IFujiCameraPropertyValues
     int FILM_SIMULATION_ACROS_R  =14;
     int FILM_SIMULATION_ACROS_G  =15;
     int FILM_SIMULATION_ETERNA  =16;
+    int FILM_SIMULATION_MAX = 17;
 
     int BATTERY_CRITICAL  =1;
     int BATTERY_ONE_BAR  =2;

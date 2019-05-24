@@ -208,12 +208,10 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
                 unlockFocus();
                 break;
             case R.id.button3:
-                //readImageFile("sampledata2.bin");
-                //showMessageText("show 'sampledata2.bin'.");
+                changeFilmSimulation();
                 break;
             case R.id.button4:
-                //readImageFile("sampledata3.bin");
-                //showMessageText("show 'sampledata3.bin'.");
+                changeImageAspect();
                 break;
             default:
                 showMessageText("Unknown : " + id);
@@ -308,6 +306,52 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
             e.printStackTrace();
         }
     }
+
+    private void changeFilmSimulation()
+    {
+        try
+        {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean ret = connection.execute_change_film_simulation();
+                    if (!ret)
+                    {
+                        showMessageText("Change FilmSimulation Failure...");
+                    }
+                }
+            });
+            thread.start();
+            Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.change_film_simulation, Snackbar.LENGTH_SHORT).show();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    private void changeImageAspect()
+    {
+        try
+        {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean ret = connection.execute_change_image_aspect();
+                    if (!ret)
+                    {
+                        showMessageText("Change Image aspect Failure...");
+                    }
+                }
+            });
+            thread.start();
+            Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.change_image_aspect, Snackbar.LENGTH_SHORT).show();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void updateImage(ReceivedDataHolder receivedData)

@@ -69,10 +69,12 @@ public class InformationView extends AppCompatImageView
             // Rotates the image.
             int centerX = canvas.getWidth() / 2;
             int centerY = canvas.getHeight() / 2;
+            int startX = 90;
 
             Paint framePaint = new Paint();
             framePaint.setStyle(Paint.Style.STROKE);
             framePaint.setColor(Color.WHITE);
+            framePaint.setTextSize(24);
 
             String message = shooting_mode + " REMAIN : " + sd_remain_size  + " ISO : " + iso  + " BATT: ";
             if (battery_level < 0)
@@ -84,7 +86,7 @@ public class InformationView extends AppCompatImageView
                 message = message + battery_level + "% ";
             }
             message = message + " " + shutter_speed + " " + aperture + "  " + expRev + " : cnt:" + f_ss_Control;
-            canvas.drawText(message, centerX, centerY - 50, framePaint);
+            canvas.drawText(message, startX, centerY - 50, framePaint);
             Log.v(TAG, message);
 
 
@@ -102,12 +104,12 @@ public class InformationView extends AppCompatImageView
                 message = message + " ERROR";
             }
             message = message + " [" + focusControlMode + "] ";
-            canvas.drawText(message, centerX, centerY, framePaint);
+            canvas.drawText(message, startX, centerY, framePaint);
             Log.v(TAG, message);
 
 
             message = imageAspect + " " + imageFormat + " " + "[" + filmSimulation + "]" + " ";
-            canvas.drawText(message, centerX, centerY + 50, framePaint);
+            canvas.drawText(message, startX, centerY + 50, framePaint);
             Log.v(TAG, message);
 
         }

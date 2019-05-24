@@ -74,13 +74,16 @@ public class FujiStatusChecker implements IFujiStatusReceiver
         }
     }
 
+    public int getValue(int statusId)
+    {
+        return (statusHolder.getValue(statusId));
+    }
+
     @Override
     public void stop()
     {
         threadIsRunning = false;
     }
-
-
 
     private void statusReceivedImpl(byte[] data)
     {

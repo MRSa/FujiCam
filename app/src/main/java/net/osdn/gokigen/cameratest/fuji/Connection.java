@@ -10,6 +10,13 @@ import net.osdn.gokigen.cameratest.fuji.statuses.FujiStatusChecker;
 import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatusNotify;
 import net.osdn.gokigen.cameratest.fuji.statuses.IFujiStatusRequest;
 
+import static net.osdn.gokigen.cameratest.fuji.statuses.IFujiCameraProperties.FILM_SIMULATION;
+import static net.osdn.gokigen.cameratest.fuji.statuses.IFujiCameraProperties.IMAGE_ASPECT;
+import static net.osdn.gokigen.cameratest.fuji.statuses.IFujiCameraPropertyValues.FILM_SIMULATION_MAX;
+import static net.osdn.gokigen.cameratest.fuji.statuses.IFujiCameraPropertyValues.FILM_SIMULATION_MIN;
+import static net.osdn.gokigen.cameratest.fuji.statuses.IFujiCameraPropertyValues.IMAGE_ASPECT_MAX;
+import static net.osdn.gokigen.cameratest.fuji.statuses.IFujiCameraPropertyValues.IMAGE_ASPECT_MIN;
+
 public class Connection implements IFujiStatusRequest
 {
     private final String TAG = toString();
@@ -272,6 +279,47 @@ public class Connection implements IFujiStatusRequest
         }
         return (false);
     }
+
+    public boolean execute_change_film_simulation()
+    {
+        try
+        {
+            // 現在の値を入手
+            int currentValue = statusChecker.getValue(FILM_SIMULATION);
+            currentValue++;
+            if (currentValue > FILM_SIMULATION_MAX)
+            {
+                currentValue = FILM_SIMULATION_MIN;
+            }
+            return (updateProperty(FILM_SIMULATION, currentValue));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return (false);
+    }
+
+    public boolean execute_change_image_aspect()
+    {
+        try
+        {
+            // 現在の値を入手
+            int currentValue = statusChecker.getValue(IMAGE_ASPECT);
+            currentValue++;
+            if (currentValue > IMAGE_ASPECT_MAX)
+            {
+                currentValue = IMAGE_ASPECT_MIN;
+            }
+            return (updateProperty(IMAGE_ASPECT, currentValue));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return (false);
+    }
+
 
     public boolean execute_unlock_focus()
     {

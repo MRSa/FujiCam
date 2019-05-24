@@ -1,6 +1,6 @@
 package net.osdn.gokigen.cameratest.fuji.statuses;
 
-interface IFujiCameraProperties
+public interface IFujiCameraProperties
 {
     int BATTERY_LEVEL         = 0x5001;
     int WHITE_BALANCE         = 0x5005;
