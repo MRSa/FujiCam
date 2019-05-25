@@ -211,7 +211,7 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
                 changeFilmSimulation();
                 break;
             case R.id.button4:
-                changeImageAspect();
+                queryCameraCapability();
                 break;
             default:
                 showMessageText("Unknown : " + id);
@@ -345,6 +345,29 @@ public class CamTest implements View.OnClickListener, View.OnTouchListener, ILiv
             });
             thread.start();
             Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.change_image_aspect, Snackbar.LENGTH_SHORT).show();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void queryCameraCapability()
+    {
+        try
+        {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean ret = connection.execute_query_camera_capability();
+                    if (!ret)
+                    {
+                        showMessageText("Query Camera Capability...");
+                    }
+                }
+            });
+            thread.start();
+            Snackbar.make(activity.findViewById(R.id.constraintLayout), R.string.query_capability, Snackbar.LENGTH_SHORT).show();
         }
         catch (Exception e)
         {

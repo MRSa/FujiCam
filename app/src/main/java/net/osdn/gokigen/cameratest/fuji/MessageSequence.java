@@ -200,7 +200,7 @@ class MessageSequence
     }
 
 
-    byte[] start_message7()
+    byte[] query_camera_capabilities()
     {
         return (new byte[] {
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
@@ -400,7 +400,24 @@ class MessageSequence
                 (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
 
                 // command code
-               low, high,
+               low, high, (byte)0x00, (byte)0x00,
+        });
+    }
+
+    byte[] update_property_2(byte data0, byte data1)
+    {
+        return (new byte[] {
+                // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
+                (byte)0x02, (byte)0x00,
+
+                // message_header.type : two_part (0x1016)
+                (byte)0x16, (byte)0x10,
+
+                // message_id (0～1づつ繰り上がる...けど two-part messageなので同じ)
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+
+                // data...
+                data1, data0,
         });
     }
 

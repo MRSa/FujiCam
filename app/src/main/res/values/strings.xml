@@ -60,4 +60,5 @@
 
     <string name="dialog_message_power_off">Power Off</string>
 
+    <string name="query_capability">Query Camera Capability</string>
 </resources>

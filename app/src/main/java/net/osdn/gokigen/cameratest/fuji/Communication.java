@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 class Communication
 {
@@ -30,11 +32,13 @@ class Communication
 
     private final FujiStreamReceiver stream;
     private final FujiAsyncResponseReceiver response;
+    //private ExecutorService executor;
 
     Communication(@NonNull Activity activity, @NonNull ILiveViewImage imageViewer)
     {
         this.stream = new FujiStreamReceiver(activity, CAMERA_IP, STREAM_PORT, imageViewer);
         this.response = new FujiAsyncResponseReceiver(CAMERA_IP, ASYNC_RESPONSE_PORT);
+        //this.executor = Executors.newFixedThreadPool(1);
     }
 
     void connect_socket()
@@ -83,10 +87,14 @@ class Communication
         }
         socket = null;
         sequenceNumber = SEQUENCE_START_NUMBER;
+        //if (!executor.isShutdown())
+        //
+        //    executor.shutdownNow();
+        //}
         System.gc();
     }
 
-    void send_to_camera(byte[] byte_array, boolean useSeqNumber)
+    void send_to_camera(byte[] byte_array, boolean useSequenceNumber, boolean isIncrementSeqNumber)
     {
         //Log.v(TAG, "send_to_camera() : " + byte_array.length + " bytes.");
         try
@@ -102,17 +110,19 @@ class Communication
             sendData[3] = 0x00;
             System.arraycopy(byte_array,0,sendData,4, byte_array.length);
 
-            if (useSeqNumber)
+            if (useSequenceNumber)
             {
-                sendData[8]  = (byte) ((0x000000ff & sequenceNumber));
-                sendData[9]  = (byte) (((0x0000ff00 & sequenceNumber) >>> 8) & 0x000000ff);
+                // Sequence Number を反映させる
+                sendData[8] = (byte) ((0x000000ff & sequenceNumber));
+                sendData[9] = (byte) (((0x0000ff00 & sequenceNumber) >>> 8) & 0x000000ff);
                 sendData[10] = (byte) (((0x00ff0000 & sequenceNumber) >>> 16) & 0x000000ff);
                 sendData[11] = (byte) (((0xff000000 & sequenceNumber) >>> 24) & 0x000000ff);
-                if (isDumpReceiveLog)
-                {
+                if (isDumpReceiveLog) {
                     Log.v(TAG, "SEQ No. : " + sequenceNumber);
                 }
-
+            }
+            if (isIncrementSeqNumber)
+            {
                 // シーケンス番号を増やす
                 sequenceNumber++;
             }
