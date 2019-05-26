@@ -133,7 +133,7 @@ class MessageSequence
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : single_part (0x1015)  : GetDevicePropValue
+                // message_header.type : single_part (0x1015)  : 0xdf24
                 (byte)0x15, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる)
@@ -151,7 +151,7 @@ class MessageSequence
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : two_part (0x1016)  : SetDevicePropValue
+                // message_header.type : two_part (0x1016)  : 0xdf24
                 (byte)0x16, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる)
@@ -169,7 +169,7 @@ class MessageSequence
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x02, (byte)0x00,
 
-                // message_header.type : two_part (0x1016)  : SetDevicePropValue
+                // message_header.type : two_part (0x1016)  : 0x00020007
                 (byte)0x16, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる...けど two-part messageなので同じ)
@@ -180,14 +180,14 @@ class MessageSequence
 
         });
     }
-
+/*
     byte[] start_message6()
     {
         return (new byte[] {
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : single_part (0x1015)  : GetDevicePropValue
+                // message_header.type : single_part (0x1015)  : 0xd212 (status_request)
                 (byte)0x15, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる...)
@@ -198,7 +198,7 @@ class MessageSequence
 
         });
     }
-
+*/
 
     byte[] query_camera_capabilities()
     {
@@ -215,14 +215,14 @@ class MessageSequence
         });
     }
 
-
+/*
     byte[] start_message8()
     {
         return (new byte[] {
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : single_part (0x1015) : GetDevicePropValue
+                // message_header.type : single_part (0x1015) : 0xd212
                 (byte)0x15, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる...)
@@ -233,7 +233,7 @@ class MessageSequence
 
         });
     }
-
+*/
 
 
     byte[] camera_remote_message()
@@ -242,7 +242,7 @@ class MessageSequence
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : camera_remote (0x101c)  : InitiateOpenCapture
+                // message_header.type : camera_remote (0x101c)
                 (byte)0x1c, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる...)
@@ -263,11 +263,11 @@ class MessageSequence
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : single_part (0x1015) : GetDevicePropValue
+                // message_header.type : single_part (0x1015) : 0xd212 (status_request)
                 (byte)0x15, (byte)0x10,
 
                 // message_id (0～1づつ繰り上がる...)
-                (byte)0x0A, (byte)0x00, (byte)0x00, (byte)0x00,
+                (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
 
                 // data ...
                 (byte)0x12, (byte)0xd2, (byte)0x00, (byte)0x00,
@@ -357,7 +357,7 @@ class MessageSequence
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : aperture (0xd240)
+                // message_header.type : shutter speed (0xd240)
                 (byte)0x40, (byte)0xd2,
 
                 // message_id (0～1づつ繰り上がる...
@@ -376,7 +376,7 @@ class MessageSequence
                 // message_header.index : uint16 (0: terminate, 2: two_part_message, 1: other)
                 (byte)0x01, (byte)0x00,
 
-                // message_header.type : aperture (0x902e)
+                // message_header.type : exprev (0x902e)
                 (byte)0x2e, (byte)0x90,
 
                 // message_id (0～1づつ繰り上がる...

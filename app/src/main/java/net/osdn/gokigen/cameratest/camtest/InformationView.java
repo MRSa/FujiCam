@@ -17,7 +17,7 @@ public class InformationView extends AppCompatImageView
     private final String TAG = toString();
     private Point focusPoint;
     private int sd_remain_size;
-    private String shooting_mode;
+    private String shooting_mode = null;
     private boolean focus_lock;
     private boolean isDeviceError;
     private int battery_level;
@@ -75,6 +75,15 @@ public class InformationView extends AppCompatImageView
             framePaint.setStyle(Paint.Style.STROKE);
             framePaint.setColor(Color.WHITE);
             framePaint.setTextSize(24);
+
+
+            if (shooting_mode == null)
+            {
+                String message = "NOT CONNECTED";
+                canvas.drawText(message, centerX, centerY, framePaint);
+                Log.v(TAG, message);
+                return;
+            }
 
             String message = shooting_mode + " REMAIN : " + sd_remain_size  + " ISO : " + iso  + " BATT: ";
             if (battery_level < 0)

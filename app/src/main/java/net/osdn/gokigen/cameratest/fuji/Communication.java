@@ -143,6 +143,7 @@ class Communication
     {
         try
         {
+            Thread.sleep(50);
             byte[] byte_array = new byte[BUFFER_SIZE];
             InputStream is = socket.getInputStream();
             if (is != null)

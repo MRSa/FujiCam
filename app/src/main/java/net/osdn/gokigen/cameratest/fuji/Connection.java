@@ -57,8 +57,7 @@ public class Connection implements IFujiStatusRequest
 
             comm.send_to_camera(sequence.registration_message(), false, false);
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(0, rx_bytes);
-            Thread.sleep(50);
+            dump_bytes("Connect", 0, rx_bytes);
 
             // 応答エラーかどうかをチェックする
             if (rx_bytes.getData().length == 8)
@@ -76,67 +75,72 @@ public class Connection implements IFujiStatusRequest
             // start_messageを送信
             comm.send_to_camera(sequence.start_message(), true, true);
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(1, rx_bytes);
-            Thread.sleep(50);
+            dump_bytes("Connect", 1, rx_bytes);
 
             //  なんだろう？？ (送信が必要なようだが）
             comm.send_to_camera(sequence.start_message2(), true, true);
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(2, rx_bytes);
-            Thread.sleep(50);
-
-            // two_part messageを発行 (その１)
-            comm.send_to_camera(sequence.start_message3_1(), true, true);
-            rx_bytes = comm.receive_from_camera();
-            dump_bytes(3, rx_bytes);
-            Thread.sleep(50);
-
-            if (rx_bytes.getData().length <= 50)
+            dump_bytes("Connect", 2, rx_bytes);
+            byte[] rx_data1 = rx_bytes.getData();
+            if (rx_data1.length == (int)rx_data1[0])
             {
-                // two_part messageを発行 (その２)
-                comm.send_to_camera(sequence.start_message3_2(), false, false);
+                //// もう一度受信する...
                 rx_bytes = comm.receive_from_camera();
-                dump_bytes(4, rx_bytes);
-                Thread.sleep(50);
+                dump_bytes("Connect",99, rx_bytes);
             }
+
+            // two_part messageを発行
+            comm.send_to_camera(sequence.start_message3_1(), true, false);
+            comm.send_to_camera(sequence.start_message3_2(), true, true);
+
+            rx_bytes = comm.receive_from_camera();
+            dump_bytes("Connect", 3, rx_bytes);
 
             // remote mode
             comm.send_to_camera(sequence.start_message4(), true, true);
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(5, rx_bytes);
-            Thread.sleep(50);
+/*
+            dump_bytes("Connect", 4, rx_bytes);
+            rx_data1 = rx_bytes.getData();
+            if (rx_data1[4] == (byte) 0x02)
+            {
+                //// 受信データが分割されている、、もう一度受信する
+                rx_bytes = comm.receive_from_camera();
+                dump_bytes("Connect", 98, rx_bytes);
+            }
+*/
 
             if (!isBothLiveView)
             {
-                // two_part messageを発行 (その１)
+                // two_part messageを発行
                 comm.send_to_camera(sequence.start_message5_1(), true, false);
-                rx_bytes = comm.receive_from_camera();
-                dump_bytes(6, rx_bytes);
-                Thread.sleep(50);
-
-                // two_part messageを発行 (その２)
                 comm.send_to_camera(sequence.start_message5_2(), true, true);
                 rx_bytes = comm.receive_from_camera();
-                dump_bytes(7, rx_bytes);
-                Thread.sleep(50);
+                dump_bytes("Connect", 5, rx_bytes);
 
                 // ????
-                comm.send_to_camera(sequence.start_message6(), true, true);
+                comm.send_to_camera(sequence.status_request_message(), true, true);
                 rx_bytes = comm.receive_from_camera();
-                dump_bytes(8, rx_bytes);
-                Thread.sleep(50);
+                dump_bytes("Connect", 6, rx_bytes);
+                rx_data1 = rx_bytes.getData();
+                if (rx_data1[4] == (byte) 0x02)
+                {
+                    //// 受信データが分割されている場合、、もう一度受信する
+                    rx_bytes = comm.receive_from_camera();
+                    dump_bytes("Connect", 97, rx_bytes);
+                }
 
                 // ????
                 comm.send_to_camera(sequence.query_camera_capabilities(), true, true);
                 rx_bytes = comm.receive_from_camera();
-                dump_bytes(9, rx_bytes);
-                Thread.sleep(50);
+                dump_bytes("Connect", 7, rx_bytes);
 
+                /*
                 // ????
-                comm.send_to_camera(sequence.start_message8(), true, true);
+                comm.send_to_camera(sequence.status_request_message(), true, true);
                 rx_bytes = comm.receive_from_camera();
-                dump_bytes(10, rx_bytes);
-                Thread.sleep(50);
+                dump_bytes("Connect", 8, rx_bytes);
+*/
             }
 
             // リモート制御の開始！
@@ -144,12 +148,10 @@ public class Connection implements IFujiStatusRequest
 
             // 応答OKの場合は、8バイト ({0x03, 0x00, 0x01, 0x20} + {0x10, 0x02, 0x00, 0x00} )が応答されるはず
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(11, rx_bytes);
-            Thread.sleep(150);
-
+            dump_bytes("Connect", 9, rx_bytes);
 
             // 別のポートもオープンして動作を行う。 (1500ms程度待つといけるみたいだ...)
-            Thread.sleep(2000);
+            Thread.sleep(1500);
             comm.start_stream();
             comm.start_response();
 
@@ -169,9 +171,8 @@ public class Connection implements IFujiStatusRequest
         {
             comm.send_to_camera(sequence.reset_message(), true, true);
             ReceivedDataHolder rx_bytes = comm.receive_from_camera();
-            dump_bytes(0, rx_bytes);
+            dump_bytes("Reset", -1, rx_bytes);
             statusChecker.stop();
-            Thread.sleep(150);
         }
         catch (Exception e)
         {
@@ -221,6 +222,7 @@ public class Connection implements IFujiStatusRequest
         if (pauseRequestStatus)
         {
             // ステータス更新を一時停止する。
+            Log.v(TAG, "STATUS REQUEST IS PAUSED...");
             return (false);
         }
         try
@@ -232,8 +234,21 @@ public class Connection implements IFujiStatusRequest
                 // 受信したステータス情報を渡す
                 statusChecker.statusReceived(rx_bytes);
             }
-            dump_bytes(12, rx_bytes);
-
+            dump_bytes("Status", 1, rx_bytes);
+/*
+            byte[] rx_data1 = rx_bytes.getData();
+            if (rx_data1[4] == (byte) 0x02)
+            {
+                //// 受信データが分割されている、、もう一度受信する
+                rx_bytes = comm.receive_from_camera();
+                dump_bytes("Status", 2, rx_bytes);
+                if (rx_bytes.getData().length > 0)
+                {
+                    // 受信したステータス情報を渡す
+                    statusChecker.statusReceived(rx_bytes);
+                }
+            }
+*/
             return (true);
         }
         catch (Exception e)
@@ -243,9 +258,13 @@ public class Connection implements IFujiStatusRequest
         return (false);
     }
 
-    private void dump_bytes(int indexNumber, ReceivedDataHolder data)
+    private boolean dump_bytes(String header, int indexNumber, ReceivedDataHolder data)
     {
         int index = 0;
+        byte[] targetData = data.getData();
+        int receivedDataLength = targetData[0] + (targetData[1] << 8) + (targetData[2] << 16) + (targetData[3] << 24);
+        boolean checkLength = receivedDataLength <= targetData.length;
+        String logHead = (indexNumber < 0) ? header : header + " " + indexNumber;
         StringBuffer message;
         message = new StringBuffer();
         for (byte item : data.getData())
@@ -254,35 +273,36 @@ public class Connection implements IFujiStatusRequest
             message.append(String.format("%02x ", item));
             if (index >= 8)
             {
-                Log.v(TAG, " RX [" + indexNumber + "] " + message);
+                Log.v(TAG, " RX [" + logHead + "] " + message);
                 index = 0;
                 message = new StringBuffer();
             }
         }
         if (index != 0)
         {
-            Log.v(TAG, " RX [" + indexNumber + "] "  + message);
+            Log.v(TAG, " RX [" + logHead + "] "  + message);
         }
-        System.gc();
+        //System.gc();
+        return (checkLength);
     }
 
     public boolean execute_focus_point(PointF point)
     {
+        pauseRequestStatus = false;
         try
         {
             byte x = (byte) (0x000000ff & Math.round(point.x));
             byte y = (byte) (0x000000ff & Math.round(point.y));
             Log.v(TAG, "DRIVE AF (" + x + "," + y + ")");
-
             comm.send_to_camera(sequence.execute_focus_lock(x, y), true, true);
-
             ReceivedDataHolder rx_bytes = comm.receive_from_camera();
-            dump_bytes(16, rx_bytes);
+            dump_bytes("Focus Point", -1, rx_bytes);
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+        pauseRequestStatus = false;
         return (false);
     }
 
@@ -332,9 +352,8 @@ public class Connection implements IFujiStatusRequest
         try
         {
             comm.send_to_camera(sequence.query_camera_capabilities(), true, true);
-            Thread.sleep(50);
             ReceivedDataHolder rx_bytes = comm.receive_from_camera();
-            dump_bytes(21, rx_bytes);
+            dump_bytes("Capability", -1, rx_bytes);
         }
         catch (Exception e)
         {
@@ -347,33 +366,35 @@ public class Connection implements IFujiStatusRequest
 
     public boolean execute_unlock_focus()
     {
+        pauseRequestStatus = true;
         try
         {
             comm.send_to_camera(sequence.execute_focus_unlock(), true, true);
-
             ReceivedDataHolder rx_bytes = comm.receive_from_camera();
-            dump_bytes(17, rx_bytes);
+            dump_bytes("Unlock Focus", -1, rx_bytes);
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+        pauseRequestStatus = false;
         return (false);
     }
 
     public boolean execute_shutter()
     {
+        pauseRequestStatus = true;
         try
         {
             comm.send_to_camera(sequence.execute_shutter_message(), true, true);
-
             ReceivedDataHolder rx_bytes = comm.receive_from_camera();
-            dump_bytes(14, rx_bytes);
+            dump_bytes("Shutter", -1, rx_bytes);
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+        pauseRequestStatus = false;
         return (false);
     }
 
@@ -390,23 +411,11 @@ public class Connection implements IFujiStatusRequest
             byte data2 = (byte)((0x0000ff00 & setValue) >> 8);
             byte data3 = (byte)((0x000000ff & setValue));
 
-            // two_part messageを発行 (その１)
+            // two_part messageを発行
             comm.send_to_camera(sequence.update_property_1(high, low), true, false);
-            Thread.sleep(50);
-            rx_bytes = comm.receive_from_camera();
-            dump_bytes(19, rx_bytes);
-/*
-            // two_part messageを発行 (その１)  :  ダミーでもう一発...!
-            comm.send_to_camera(sequence.update_property_1(high, low), true, false);
-            Thread.sleep(50);
-            rx_bytes = comm.receive_from_camera();
-            dump_bytes(15, rx_bytes);
-*/
-            // two_part messageを発行 (その２)
             comm.send_to_camera((isShort) ? sequence.update_property_2(data2, data3) : sequence.update_property_2(data0, data1, data2, data3), true, true);
-            Thread.sleep(50);
             rx_bytes = comm.receive_from_camera();
-            dump_bytes(20, rx_bytes);
+            dump_bytes("Prop", -1, rx_bytes);
         }
         catch (Exception e)
         {
